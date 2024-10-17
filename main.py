@@ -107,4 +107,13 @@ model.addConstrs((u[j, p, m] <= BM*mu[j, p, m] for j in J for p in P for m in Mp
 model.update()
 
 #FUNCIÓN OBJETIVO
-#funcion_objetivo = 
+funcion_objetivo = (quicksum(pendiente[f, j])*
+                    (quicksum(
+                        (quicksum((x[i, j, k]*costo_mat[i, k] + quicksum(z[i, j, p]*coef_red_t[i, j, k]*sueldo[p] for p in P)) for k in Ki) for i in I)                      
+                             ) + quicksum(costo_maq[m, j]*u[j, p, m] for p in P for m in Mp)
+                             ) for f in F for j in J)
+
+model.setObjective(funcion_objetivo, GRB.MINIMIZE)
+model.optimize()
+print(f'El valor mínimo en CLP es: {model.ObjVal}')
+                    
