@@ -106,7 +106,7 @@ model.addConstrs((u[j, p, m] <= BM*mu[j, p, m] for j in J for p in P for m in Mp
 #UPDATE
 model.update()
 
-#FUNCIÓN OBJETIVO
+#FUNCIÓN OBJETIVO (REVISARRRRR)
 funcion_objetivo = (quicksum(pendiente[f, j])*
                     (quicksum(
                         (quicksum((x[i, j, k]*costo_mat[i, k] + quicksum(z[i, j, p]*coef_red_t[i, j, k]*sueldo[p] for p in P)) for k in Ki) for i in I)                      
