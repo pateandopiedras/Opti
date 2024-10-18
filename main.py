@@ -41,7 +41,7 @@ rho = {(j, p): utiliza_maquinaria()[j, p] for j in J for p in P}
 #wf: Indica si el terreno donde va a construir su vivienda la familia f supera la pendiente máxima
 pendiente = {f: pendiente_maxima()[f] for f in F}
 #BM: Suma de todas las unidades de trabajo Zp de todos los personales p
-BM = 99999999999
+BM = 0
 #Cmj: Costo asociado al uso de maquinaria m para la construcción de vivienda j
 costo_maq = {(m, j): costo_maquinaria()[m, j] for m in Mp for j in J}
 #Np: Cantidad de unidades de trabajo disponibles de cada tipo de personal p
