@@ -115,5 +115,5 @@ funcion_objetivo = (quicksum(pendiente[f, j])*
 
 model.setObjective(funcion_objetivo, GRB.MINIMIZE)
 model.optimize()
-print(f'El valor mínimo en CLP es: {model.ObjVal}')
+print(f'blablabla es: {model.ObjVal}')
                     
