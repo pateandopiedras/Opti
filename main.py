@@ -6,25 +6,21 @@ model = Model()
 model.setParam('TimeLimit', 1800) #60*30
 
 #CONJUNTOS---------------------------------
-F = range(1, A() + 1) #Familias afectadas
+F = range(1, len(A()) + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
 I = range(1, len(B()) + 1) #Materiales de construcción
-J = range(1, len(C()) + 1) #Tipo de vivienda a construir según cantidad de integrantes por familia
-#Ki = range(1, D() + 1) #Variedad del material i
-Mp = range(1, G() + 1) #Tipo de maquinaria m que puede utilizar el personal p
-P = range(1, E() + 1) #Tipo de personal
-#REVISARRR
-OMEGA = range(1, len(H())) #Pares de la forma (f, j) que representan el tipo de vivienda j a la que accederá familia f
+#Ki = range(1, C() + 1) #Variedad del material i
+P = range(1, D() + 1) #Trabajadores del proyecto
+M = range(1, E() + 1) #Tipo de maquinaria m
 
 #PARÁMETROS--------------------------------
 #T: Plazo máximo, en días, de la duración del Plan de Reconstrucción
 max_plazo = 700
-#aij: Cantidad exacta de material del tipo i que se necesita para una vivienda j
-cant_material = {(i, j): cantidad_material()[i, j] for i in I for j in J}
-
+#hf: Costo en CLP asociado a un día de construcción de la vivienda f
+costo_dia_vivienda = {f: costo_diario_vivienda()[f] for f in F}
+#aif: Cantidad exacta de material del tipo i que se necesita para una vivienda f
+cant_material = {(i, f): cantidad_material()[i, f] for i in I for f in F}
 #cik: Costo en CLP de una unidad del material k del tipo i
 costo_mat = {(i, k): costo_unidad_material()[i, k] for i in I for k in range(1, len(D(i))+1)}
-print(costo_mat)
-
 #dik: Costo fijo en CLP asociado al uso del material k del tipo i
 costo_uso_mat = {(i, k): costo_uso_material()[i, k] for i in I for k in Ki}
 #Xik: cantidad total disponible de la variante k del material del tipo i
@@ -34,58 +30,46 @@ calidad = {(i, k): factor_calidad()[i, k] for i in I for k in Ki}
 #bij: Factor mínimo de calidad como promedio ponderado de las variantes utilizadas, para cada i y para cada j
 calidad_promedio = {(i, j): factor_calidad_promedio()[i, j] for i in I for j in J}
 #deltaik: Coeficiente de reducción de material por mala calidad para la variante k del tipo de material i
-coef_red_m = {(i, k): coef_reduccion_m()[i, k] for i in I for k in Ki}
-#-------------------------------------------
-#dijp: REVISAR
-
-#ej: Cantidad máxima de personas que pueden trabajar en una unidad de trabajo en vivienda j
-#####max_personas = {j: cantidad_max_personas()[j] for j in J}
-#fj: Cantidad máxima de tiempo que puede tardar la construcción de la vivienda j
-#####max_tiempo = {j: cantidad_max_tiempo()[j] for j in J}
-#gjp: Cantidad mínima de personas del tipo p requerida por unidad de trabajo para vivienda j
-#####min_personas = {(j, p): cantidad_min_personas()[j, p] for j in J for p in P}
-#qijk: Coeficiente de reducción de trabajo para el material k del tipo i en vivienda j
-#####coef_red_t = {(i, j, k): coef_reduccion_t()[i, j, k] for i in I for j in J for k in Ki}
+coef_red_mat = {(i, k): coef_reduccion_mat()[i, k] for i in I for k in Ki}
+#qp: Sueldo por día de trabajo que cobra p
+sueldo = {p: sueldo_trabajador()[p] for p in P}
+#likp: Cantidad de la variante k del material del tipo i que puede usar el trabajador p en un día
+cant_uso_mat = {(i, k, p): cantidad_uso_material()[i, k, p] for i in I for k in Ki for p in P}
+#Likp: Cantidad máxima de la variante k del tipo i que puede usar p en la duración del proyecto
+cant_max_uso_mat = {(i, k, p): cantidad_max_uso_material()[i, k, p] for i in I for k in Ki for p in P}
+#Rf: Cantidad mínima de personas requeridas para construir la vivienda f
+min_trabajadores = {f: minimo_trabajadores()[f] for f in F}
+#Sf: Cantidad máxima de personas requeridas para construir f
+max_trabajadores = {f: maximo_trabajadores()[f] for f in F}
 #rjpm: Índice de reducción de trabajo por unidad de trabajo realizada con el tipo de maquinaria m por p para j
 #####ind_red = {(j, p, m): ind_reduccion()[j, p, m] for j in J for p in P for m in Mp}
-#wfj: Indica si el Comité le construye a la familia f la vivienda j
-#####comite = {(f, j): comite_construye()[f, j] for f in F for j in J}
 #rhojp: Indica si el personal p puede utilizar la maquinaria para la construcción de la vivienda j
 #####rho = {(j, p): utiliza_maquinaria()[j, p] for j in J for p in P}
 #wf: Indica si el terreno donde va a construir su vivienda la familia f supera la pendiente máxima
 #####pendiente = {f: pendiente_maxima()[f] for f in F}
-#BM: Suma de todas las unidades de trabajo Zp de todos los personales p
-BM = 9999
 #Cmj: Costo asociado al uso de maquinaria m para la construcción de vivienda j
 #####costo_maq = {(m, j): costo_maquinaria()[m, j] for m in Mp for j in J}
-#Np: Cantidad de unidades de trabajo disponibles de cada tipo de personal p
-#####uni_trabajo = {p: unidades_trabajo()[p] for p in P}
-#Pik: Cantidad disponible de material k del tipo i
-#####material_dispo = {(i, k): material_disponible()[i, k] for i in I for k in Ki}
-#Qp: Cantidad máxima de personas de cada tipo de personal p
-#####max_personal = {p: cantidad_max_personal()[p] for p in P}
-#Sp: Sueldo por unidad de trabajo que cobra p
-#####sueldo = {p: sueldo_personal()[p] for p in P}
 #Zp: Cantidad máxima de unidades de trabajo disponibles de cada tipo de personal p
 #####max_uni_trabajo = {p: maxima_unidades_trabajo()[p] for p in P}
+BM = 9999
 
 #VARIABLES-------------------------------------
-#Cantidad, en días de trabajo, que demora la construcción del tipo de vivienda j para la familia f
-t = model.addVars(F, J, vtype = GRB.INTEGER, name = "t_fj")
-#Cantidad real a utilizar de la variante k del tipo de material i en la construcción de j para f
-x = model.addVars(F, J, I, Ki, vtype = GRB.INTEGER, name = "x_fjik")
-#Cantidad ideal a utilizar de k del tipo i en la construcción de j para f
-x_p = model.addVars(F, J, I, Ki, vtype = GRB.INTEGER, name = "x_p_fjik")
-#Indica si se utiliza la opción k del material i en la construcción de la vivienda j para familia f
-y = model.addVars(F, J, I, Ki, vtype = GRB.BINARY, name = "y_fjik")
-#Días de trabajo realizadas por p (manual) con el material i con la variante k para la construcción de j para familia f
-z = model.addVars(F, I, J, Ki, P, vtype = GRB.INTEGER, name = "z_fijkp")
-#Cantidad de personas del tipo p que trabajan en la vivienda j
-v = model.addVars(J, P, vtype = GRB.INTEGER, name = "v_jp")
+#Cantidad, en días de trabajo, que demora la construcción de la vivienda f
+t = model.addVars(F, vtype = GRB.INTEGER, name = "t_f")
+#Cantidad real a utilizar de la variante k del tipo de material i en la construcción de f
+x = model.addVars(F, I, Ki, vtype = GRB.INTEGER, name = "x_fik")
+#Cantidad ideal a utilizar de k del tipo i en la construcción de f
+x_d = model.addVars(F, I, Ki, vtype = GRB.INTEGER, name = "x_d_fik")
+#Indica si se utiliza la opción k del material i en la construcción de f
+y = model.addVars(F, I, Ki, vtype = GRB.BINARY, name = "y_fik")
+#Días de trabajo realizadas por p (manual) con la variante k del material i para la construcción de f
+z = model.addVars(F, I, Ki, P, vtype = GRB.INTEGER, name = "z_fikp")
+#Indica si p está realizando labores en f
+v = model.addVars(F, P, vtype = GRB.INTEGER, name = "v_fp")
 #Cantidad de unidades de trabajo efectuadas a través del tipo de maquinaria m por p en j sobre i
-u = model.addVars(I, J, P, Mp, vtype = GRB.INTEGER, name = "u_ijpm")
+####u = model.addVars(I, J, P, Mp, vtype = GRB.INTEGER, name = "u_ijpm")
 #Indica si se utiliza el tipo de maquinaria m por p en j sobre i
-mu = model.addVars(I, J, P, Mp, vtype = GRB.BINARY, name = "mu_ijpm")
+####mu = model.addVars(I, J, P, Mp, vtype = GRB.BINARY, name = "mu_ijpm")
 
 #RESTRICCIONES---------------------------------
 #R1 REVISARRRRR
