@@ -1,6 +1,6 @@
-material,variedad,costo
-ladrillos,cara,1000
-ladrillos,barata,500
-ladrillos,maoma,700
-cemento,cara,1500
-cemento,barata,700
+material,variedad,costo,costo_fijo,cantidad,fc,cr,uso_diario
+ladrillos,cara,1000,100,10,0,0.4,9
+ladrillos,barata,500,200,50,0,0,6
+ladrillos,maoma,700,300,90,0.5,0.5,4
+cemento,cara,1500,400,73,0,0.1,3
+cemento,barata,700,500,85,0,1,4
