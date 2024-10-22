@@ -1,7 +1,8 @@
 tipo_vivienda,material,cantidad
-1,cemento,2
-1,ladrillos,5
-2,cemento,4
-2,ladrillos,7
-3,cemento,5
-3,ladrillos,10
+1,Cimientos y Estructuras,100
+1,Paredes,100
+1,Techo,100
+1,Instalaciones Electricas,70
+1,Instalaciones Sanitarias y Agua,70
+1,Ventanas y Puertas,18
+1,Acabados,70

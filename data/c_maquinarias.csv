@@ -1,6 +1,4 @@
-maquinaria,cantidad,costo
-m1,5,1000
-m2,7,1500
-m3,9,5000
-m4,7,1500
-m5,9,5000
+maquinaria,cantidad,costo_unitario_dia
+Plataforma Elevadora,664,22000
+Grua Movil,664,80000
+Carretillas,1000,3188

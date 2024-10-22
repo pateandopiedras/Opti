@@ -1,4 +1,4 @@
-material,variedad,costo,costo_fijo,cantidad,fc,cr,uso_diario
+material,variedad,costo,costo_fijo,cantidad_variante,fc,cr,uso_diario
 ladrillos,cara,1000,100,10,0,0.4,9
 ladrillos,barata,500,200,50,0,0,6
 ladrillos,maoma,700,300,90,0.5,0.5,4

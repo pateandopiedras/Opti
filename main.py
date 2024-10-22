@@ -6,13 +6,13 @@ model = Model()
 model.setParam('TimeLimit', 10) #60*30
 
 #CONJUNTOS---------------------------------
-F = range(1, 7721 + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
+F = range(1, 664 + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
 I = range(1, len(B()) + 1) #Materiales de construcción
 #Ki = range(1, C() + 1) #Variedad del material i ###ARREGLAR
 #Variedad del material i
 def Ki(num):
     return len(C()[num]) + 1
-P = range(1, 57768 + 1) #Trabajadores del proyecto
+P = range(1, 3320 + 1) #Trabajadores del proyecto
 M = range(1, len(E()) + 1) #Tipo de maquinaria m
     
 #PARÁMETROS--------------------------------
