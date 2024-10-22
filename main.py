@@ -6,12 +6,14 @@ model = Model()
 model.setParam('TimeLimit', 1800) #60*30
 
 #CONJUNTOS---------------------------------
-F = range(1, len(A()) + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
+F = range(1, A() + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
 I = range(1, len(B()) + 1) #Materiales de construcción
-#Ki = range(1, C() + 1) #Variedad del material i
+#Variedad del material i
+def Ki(num):
+    return len(C()[num]) + 1
 P = range(1, D() + 1) #Trabajadores del proyecto
-M = range(1, E() + 1) #Tipo de maquinaria m
-
+M = range(1, len(E()) + 1) #Tipo de maquinaria m
+    
 #PARÁMETROS--------------------------------
 #T: Plazo máximo, en días, de la duración del Plan de Reconstrucción
 max_plazo = 700
@@ -20,14 +22,14 @@ costo_dia_vivienda = {f: costo_diario_vivienda()[f] for f in F}
 #aif: Cantidad exacta de material del tipo i que se necesita para una vivienda f
 cant_material = {(i, f): cantidad_material()[i, f] for i in I for f in F}
 #cik: Costo en CLP de una unidad del material k del tipo i
-costo_mat = {(i, k): costo_unidad_material()[i, k] for i in I for k in range(1, len(D(i))+1)}
+costo_mat = {(i, k): costo_unidad_material()[i, k] for i in I for k in range(1, Ki(i))}
 #dik: Costo fijo en CLP asociado al uso del material k del tipo i
-costo_uso_mat = {(i, k): costo_uso_material()[i, k] for i in I for k in Ki}
+costo_uso_mat = {(i, k): costo_uso_material()[i, k] for i in I for k in range(1, Ki(i))}
 #Xik: cantidad total disponible de la variante k del material del tipo i
 cant_variante_material = {(i, k): cantidad_variante_material()[i, k] for i in I for k in Ki}
 #betaik: Factor de calidad del material k del tipo i
 calidad = {(i, k): factor_calidad()[i, k] for i in I for k in Ki}
-#bij: Factor mínimo de calidad como promedio ponderado de las variantes utilizadas, para cada i y para cada j
+#bij: Factor mínimo de calidad como promedio ponderado de las variantes utilizadas, para cada i y para cada f
 calidad_promedio = {(i, f): factor_calidad_promedio()[i, f] for i in I for f in F}
 #deltaik: Coeficiente de reducción de material por mala calidad para la variante k del tipo de material i
 coef_red_mat = {(i, k): coef_reduccion_mat()[i, k] for i in I for k in Ki}

@@ -1,19 +1,17 @@
 import csv
 
-viviendas = [['v1', 10], ['v2', 25], ['v3', 40]]
-
 #CONJUNTOS
 def A():
-    d = {}
-    c = 1
-    with open('data/c_viviendas.csv', 'r') as archivo:
-        data = list(csv.reader(archivo))
-    data = data[1:]
-    for l in data:
-        for i in range(int(l[1])):
-            d[c] = l[0]
-            c+=1
-    return d
+   #d = {}
+   #c = 1
+   #with open('data/c_viviendas.csv', 'r') as archivo:
+        #data = list(csv.reader(archivo))
+    #data = data[1:]
+    #for l in data:
+        #for i in range(int(l[1])):
+            #d[c] = l[0]
+            #c+=1
+    return 7721
 
 def B():
     d = {}
@@ -23,56 +21,58 @@ def B():
             d[m[0]] = i+1
     return d
 
-def C(material):
+def C():
     d = {}
-    c = 0
     with open('data/c_variedades_materiales.csv', 'r') as archivo:
         data = csv.reader(archivo)
         next(data)
-        for m in data:
-            if m[0] == material:
-                d[m[1]] = c+1
-                c+=1
+        for f in data:
+            material = f[0]
+            variedades = f[1]
+            d[B()[material]] = variedades.split(';')
     return d
 
 def D():
-    d = {}
-    c = 1
-    with open('data/c_trabajadores.csv', 'r') as archivo:
-        data = list(csv.reader(archivo))
-    data = data[1:]
-    for l in data:
-        for i in range(int(l[1])):
-            d[c] = l[0]
-            c+=1
-    return d
+    #d = {}
+    #c = 1
+    #with open('data/c_trabajadores.csv', 'r') as archivo:
+       #data = list(csv.reader(archivo))
+    #data = data[1:]
+    #for l in data:
+        #for i in range(int(l[1])):
+            #d[c] = l[0]
+            #c+=1
+    return 57768
 
 def E():
     d = {}
-    c = 1
     with open('data/c_maquinarias.csv', 'r') as archivo:
-        data = list(csv.reader(archivo))
-    data = data[1:]
-    for l in data:
-        for i in range(int(l[1])):
-            d[c] = l[0]
-            c+=1
+        data = csv.reader(archivo)
+        next(data)
+        for i, m in enumerate(data):
+            maq, cantidad, costo = m
+            d[maq] = i+1
     return d
+
+F = range(1, A() + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
+I = range(1, len(B()) + 1) #Materiales de construcción
+#Variedad del material i
+def Ki(num):
+    return len(C()[num]) + 1
+P = range(1, D() + 1) #Trabajadores del proyecto
+M = range(1, len(E()) + 1) #Tipo de maquinaria m
 
 #PARÁMETROS
 def costo_diario_vivienda():
-    dic = {}
-    c = 1
-    with open('data/costo_dia_vivienda.csv', 'r') as archivo:
+    d = {}
+    with open('data/c_vivienda.csv', 'r') as archivo:
         data = list(csv.reader(archivo))
     data = data[1:]
-    for v in viviendas:
-        for l in range(v[1]):
-            for d in data:
-                if v[0] == d[0]:
-                    dic[c] = d[1]
-                    c+=1
-    return dic
+    c = 1
+    for v in range(1, A()+1):
+        d[c] = int(data[0][2])
+        c+=1
+    return d
 
 def cantidad_material():
     d = {}
@@ -89,54 +89,166 @@ def costo_unidad_material():
     with open('data/costo_mat.csv', 'r') as archivo:
         data = list(csv.reader(archivo))
     data = data[1:]
-    for m in B():
-        for f in data:
-            material, variedad, costo = f
-            if material == m:
-                d[B()[m], D(m)[variedad]] = int(costo)
+    m = B()
+    for mat in m.keys():
+        c = 1
+        for l in data:
+            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            if l[0] == mat:
+                d[m[material], c] = int(costo)
+                c += 1
     return d
 
 def costo_uso_material():
-    pass
+    d = {}
+    with open('data/costo_mat.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    m = B()
+    for mat in m.keys():
+        c = 1
+        for l in data:
+            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            if l[0] == mat:
+                d[m[material], c] = int(costo_fijo)
+                c += 1
+    return d
 
 def cantidad_variante_material():
-    pass
+    d = {}
+    with open('data/costo_mat.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    m = B()
+    for mat in m.keys():
+        c = 1
+        for l in data:
+            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            if l[0] == mat:
+                d[m[material], c] = int(cantidad)
+                c += 1
+    return d
 
 def factor_calidad():
-    pass
+    d = {}
+    with open('data/costo_mat.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    m = B()
+    for mat in m.keys():
+        c = 1
+        for l in data:
+            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            if l[0] == mat:
+                d[m[material], c] = float(fc)
+                c += 1
+    return d
 
 def factor_calidad_promedio():
     pass
 
 def coef_reduccion_mat():
-    pass
+    d = {}
+    with open('data/costo_mat.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    m = B()
+    for mat in m.keys():
+        c = 1
+        for l in data:
+            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            if l[0] == mat:
+                d[m[material], c] = float(cr)
+                c += 1
+    return d
 
 def sueldo_trabajador():
-    pass
+    d = {}
+    with open('data/c_trabajadores.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    c = 1
+    for v in range(1, D()+1):
+        d[c] = int(data[0][2])
+        c+=1
+    return d
 
+#REVISARRR
 def cantidad_uso_material():
-    pass
+    d = {}
+    with open('data/costo_mat.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    m = B()
+    for mat in m.keys():
+        c = 1
+        for v in range(1, A()+1):
+            for l in data:
+                material, variedad, costo, costo_fijo, cantidad, fc, cr, uso_diario = l
+                if l[0] == mat:
+                    d[m[material], variedad, v] = int(uso_diario)
+                    c += 1
+    return d
 
 def cantidad_max_uso_material():
     pass
 
 def minimo_trabajadores():
-    pass
+    d = {}
+    with open('data/c_viviendas.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    c = 1
+    for v in range(1, A()+1):
+        d[c] = int(data[0][5])
+        c+=1
+    return d
 
 def maximo_trabajadores():
-    pass
-
-def ind_reduccion():
-    pass
+    d = {}
+    with open('data/c_viviendas.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    c = 1
+    for v in range(1, A()+1):
+        d[c] = int(data[0][4])
+        c+=1
+    return d
 
 def utiliza_maquinaria():
     pass
 
 def ponderador_eficiencia():
-    pass
+    d = {}
+    with open('data/pond_efi_gamma.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    for m in E().keys():
+        c = 1
+        for v in range(1, D()+1):
+            for l in data:
+                if l[0] == m:
+                    d[v, E()[m]] = float(data[0][1])
+            c += 1
+    return d
 
 def cantidad_maxima_maquinas():
-    pass
+    d = {}
+    with open('data/c_viviendas.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    c = 1
+    for v in range(1, A()+1):
+        d[c] = int(data[0][3])
+        c+=1
+    return d
 
 def costo_uso_maquina():
-    pass
+    d = {}
+    with open('data/c_maquinarias.csv', 'r') as archivo:
+        data = csv.reader(archivo)
+        next(data)
+        for m in data:
+            maq, cantidad, costo = m
+            d[E()[maq]] = int(costo)
+    return d
