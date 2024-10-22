@@ -1,8 +1,8 @@
-material,cantidad
-Cimientos y Estructuras,300
-Paredes,300
-Techo,300
-Instalaciones Electricas,300
-Instalaciones Sanitarias y Agua,300
-Ventanas y Puertas,300
-Acabados,300
+material,unidad de material
+Cimientos y Estructuras,100
+Paredes,100
+Techo,100
+Instalaciones Electricas,70
+Instalaciones Sanitarias y Agua,70
+Ventanas y Puertas,18
+Acabados,70
