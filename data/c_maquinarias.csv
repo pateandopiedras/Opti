@@ -1,6 +1,4 @@
-maquinaria,cantidad,costo unitario
-Plataforma Elevadora,1,110000
-Grua Movil,1,400000
-Carretillas,2,3188
-Herramientas de corte,5,3188
-Soldadura y fijacion,3,3188
+maquinaria,cantidad por casa,cantidad total,costo unitario
+Plataforma Elevadora,1,7721,110000
+Grua Movil,1,7721,400000
+Carretillas,2,15442,3188
