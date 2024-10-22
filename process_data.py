@@ -83,6 +83,7 @@ def cantidad_material():
             vivienda, material, cantidad = f
             d[B()[material], C()[vivienda]] = int(cantidad)
     return d
+print(cantidad_material())
 
 def costo_unidad_material():
     d = {}
