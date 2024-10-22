@@ -14,8 +14,6 @@ def A():
             d[c] = l[0]
             c+=1
     return d
-print(A())
-print(len(A()))
 
 def B():
     d = {}
@@ -75,7 +73,6 @@ def costo_diario_vivienda():
                     dic[c] = d[1]
                     c+=1
     return dic
-print(costo_diario_vivienda())
 
 def cantidad_material():
     d = {}
