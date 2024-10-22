@@ -28,7 +28,7 @@ cant_variante_material = {(i, k): cantidad_variante_material()[i, k] for i in I 
 #betaik: Factor de calidad del material k del tipo i
 calidad = {(i, k): factor_calidad()[i, k] for i in I for k in Ki}
 #bij: Factor mínimo de calidad como promedio ponderado de las variantes utilizadas, para cada i y para cada j
-calidad_promedio = {(i, j): factor_calidad_promedio()[i, j] for i in I for j in J}
+calidad_promedio = {(i, f): factor_calidad_promedio()[i, f] for i in I for f in F}
 #deltaik: Coeficiente de reducción de material por mala calidad para la variante k del tipo de material i
 coef_red_mat = {(i, k): coef_reduccion_mat()[i, k] for i in I for k in Ki}
 #qp: Sueldo por día de trabajo que cobra p
@@ -41,35 +41,30 @@ cant_max_uso_mat = {(i, k, p): cantidad_max_uso_material()[i, k, p] for i in I f
 min_trabajadores = {f: minimo_trabajadores()[f] for f in F}
 #Sf: Cantidad máxima de personas requeridas para construir f
 max_trabajadores = {f: maximo_trabajadores()[f] for f in F}
-#rjpm: Índice de reducción de trabajo por unidad de trabajo realizada con el tipo de maquinaria m por p para j
-#####ind_red = {(j, p, m): ind_reduccion()[j, p, m] for j in J for p in P for m in Mp}
-#rhojp: Indica si el personal p puede utilizar la maquinaria para la construcción de la vivienda j
-#####rho = {(j, p): utiliza_maquinaria()[j, p] for j in J for p in P}
-#wf: Indica si el terreno donde va a construir su vivienda la familia f supera la pendiente máxima
-#####pendiente = {f: pendiente_maxima()[f] for f in F}
-#Cmj: Costo asociado al uso de maquinaria m para la construcción de vivienda j
-#####costo_maq = {(m, j): costo_maquinaria()[m, j] for m in Mp for j in J}
-#Zp: Cantidad máxima de unidades de trabajo disponibles de cada tipo de personal p
-#####max_uni_trabajo = {p: maxima_unidades_trabajo()[p] for p in P}
-BM = 9999
+#rhopm: Indica si la persona p está capacitada para el uso de m
+rho = {(p, m): utiliza_maquinaria()[p, m] for p in P for m in M}
+#gammapm: Ponderador de eficiencia de construcción del trabajador p con la máquina m
+gamma = {(p, m): ponderador_eficiencia()[p, m] for p in P for m in M}
+#Nf: Cantidad máxima de máquinas que se pueden usar en la vivienda f
+max_maquinas = {f: cantidad_maxima_maquinas()[f] for f in F}
+#jm: Costo diario asociado a usar la máquina m
+costo_uso_maq = {m: costo_uso_maquina()[m] for m in M}
 
 #VARIABLES-------------------------------------
 #Cantidad, en días de trabajo, que demora la construcción de la vivienda f
 t = model.addVars(F, vtype = GRB.INTEGER, name = "t_f")
-#Cantidad real a utilizar de la variante k del tipo de material i en la construcción de f
+#Cantidad a utilizar de la variante k del tipo de material i en la construcción de f
 x = model.addVars(F, I, Ki, vtype = GRB.INTEGER, name = "x_fik")
-#Cantidad ideal a utilizar de k del tipo i en la construcción de f
-x_d = model.addVars(F, I, Ki, vtype = GRB.INTEGER, name = "x_d_fik")
 #Indica si se utiliza la opción k del material i en la construcción de f
 y = model.addVars(F, I, Ki, vtype = GRB.BINARY, name = "y_fik")
 #Días de trabajo realizadas por p (manual) con la variante k del material i para la construcción de f
 z = model.addVars(F, I, Ki, P, vtype = GRB.INTEGER, name = "z_fikp")
 #Indica si p está realizando labores en f
 v = model.addVars(F, P, vtype = GRB.INTEGER, name = "v_fp")
-#Cantidad de unidades de trabajo efectuadas a través del tipo de maquinaria m por p en j sobre i
-####u = model.addVars(I, J, P, Mp, vtype = GRB.INTEGER, name = "u_ijpm")
-#Indica si se utiliza el tipo de maquinaria m por p en j sobre i
-####mu = model.addVars(I, J, P, Mp, vtype = GRB.BINARY, name = "mu_ijpm")
+#Cantidad de días de trabajo efectuados a través de la máquina m por p en f sobre variante k del material i
+u = model.addVars(F, I, Ki, P, M, vtype = GRB.INTEGER, name = "u_fikpm")
+#Indica si se utiliza la máquina m por p en f
+mu = model.addVars(F, P, M, vtype = GRB.BINARY, name = "mu_fpm")
 
 #RESTRICCIONES---------------------------------
 #R1 REVISARRRRR
@@ -108,13 +103,8 @@ v = model.addVars(F, P, vtype = GRB.INTEGER, name = "v_fp")
 #UPDATE
 model.update()
 
-#FUNCIÓN OBJETIVO (REVISARRRRR)
-#funcion_objetivo = (quicksum(pendiente[f, j])*
-                    #(quicksum(
-                        #(quicksum((x[i, j, k]*costo_mat[i, k] + quicksum(z[i, j, p]*coef_red_t[i, j, k]*sueldo[p] for p in P)) for k in Ki) for i in I)                      
-                           #  ) + quicksum(costo_maq[m, j]*u[j, p, m] for p in P for m in Mp)
-                            # ) for f in F for j in J)
-funcion_objetivo = quicksum(quicksum(x[f, j, i, k]*costo_mat[i, k] + y[f, j, i, k]*costo_uso_mat for i in I for k in Ki) for f in F for j in J)
+#FUNCIÓN OBJETIVO
+funcion_objetivo = ''
 
 model.setObjective(funcion_objetivo, GRB.MINIMIZE)
 model.optimize()

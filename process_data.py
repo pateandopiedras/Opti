@@ -14,6 +14,8 @@ def A():
             d[c] = l[0]
             c+=1
     return d
+print(A())
+print(len(A()))
 
 def B():
     d = {}
@@ -73,6 +75,7 @@ def costo_diario_vivienda():
                     dic[c] = d[1]
                     c+=1
     return dic
+print(costo_diario_vivienda())
 
 def cantidad_material():
     d = {}
@@ -132,11 +135,11 @@ def ind_reduccion():
 def utiliza_maquinaria():
     pass
 
-def pendiente_maxima():
+def ponderador_eficiencia():
     pass
 
-def costo_maquinaria():
+def cantidad_maxima_maquinas():
     pass
 
-def maxima_unidades_trabajo():
+def costo_uso_maquina():
     pass
