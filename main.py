@@ -89,7 +89,6 @@ model.addConstrs((quicksum(v[f, p] for p in P) >= min_trabajadores[f] for f in F
 model.addConstrs((quicksum(v[f, p] for p in P) <= max_trabajadores[f] for f in F), name = "R8_2")
 #R9
 model.addConstrs((quicksum(v[f, p] for f in F) <= 1 for p in P), name = "R9")
-#model.addConstrs((quicksum(v[j, p] for j in J) <= max_personal for p in P), name = "R9")
 #R10
 model.addConstrs((quicksum(quicksum(quicksum(u[f, i, k, p, m] for k in Ki) for i in I) for p in P) <= t[f] for f in F for m in M), name = "R10")
 #R11
@@ -102,10 +101,8 @@ model.addConstrs((quicksum(quicksum(u[f, i, k, p, m] for k in Ki) for i in I) <=
 model.addConstrs((mu[f, p, m] <= rho[p, m] for f in F for p in P for m in M), name = "R14")
 #R15
 model.addConstrs((quicksum(mu[f, p, m] for m in M) <= max_maquinas[f] for f in F for p in P), name = "R15")
-#model.addConstrs((z[i, j, p] <= BM*(1 - mu[j, p, m]) for i in I for j in J for p in P for m in Mp), name = "R15")
 #R16
 model.addConstrs((quicksum(mu[f, p, m] for f in F) <= 1 for p in P for m in M), name = "R16")
-#model.addConstrs((u[j, p, m] <= BM*mu[j, p, m] for j in J for p in P for m in Mp), name = "R16")
 
 #UPDATE
 model.update()
@@ -120,8 +117,44 @@ model.optimize()
 #Obtencion de datos
 valor_objetivo = model.ObjVal #costo minimizado
 
-#dias ideales
-#
+#dias ideales para construir la casa
+#hf: Costo asociado a un dia
+#cik: costo de una unidad del material k del tipo i
+#dik: costo fijo asociado al uso del material
+#qp: sueldo que cobra trabajador
+#jm: costo diario asociado a maquina
+
+cost_viv = []
+cost_unit_mat = []
+cost_fij_mat = []
+cost_sueld = []
+cost_maq = []
 
 print(f'El costo mínimo es: {model.ObjVal} $CLP necesarios para construir una vivienda')
-                    
+
+for f in F:
+    print(f'La construcción de la vivienda {f} toma {t[f].x} dias')
+
+for f in F:
+    costo = [f, costo_dia_vivienda[f]]
+    cost_viv.append(costo)
+
+
+for i in I:
+    for k in Ki:
+        costo = [i, k, costo_mat[i, k].x]
+        cost_unit_mat.append(costo)
+
+for i in I:
+    for k in Ki:
+        costo = [i, k, costo_uso_mat[i, k].x]
+        cost_fij_mat.append(costo)
+
+for p in P:
+    costo = [p, sueldo[p].x]
+    cost_sueld.append(costo)
+
+for m in M:
+    costo = [m, costo_uso_maq[m].x]
+    cost_maq.append(costo)
+
