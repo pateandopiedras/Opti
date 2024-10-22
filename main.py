@@ -108,7 +108,12 @@ model.addConstrs((quicksum(mu[f, p, m] for f in F) <= 1 for p in P for m in M), 
 model.update()
 
 #FUNCIÓN OBJETIVO
-funcion_objetivo = quicksum((t[f] * costo_dia_vivienda[f] + quicksum((quicksum((x[f, i, k] * costo_mat[i, k] + y[f, i, k] * costo_uso_mat[i, k] + quicksum((z[f, i, k, p] * sueldo[p] + quicksum(u[f, i, k, p, m] * costo_uso_maq[m] for m in M)) for p in P)) for k in Ki)) for i in I)) for f in F)
+funcion_objetivo = (quicksum((t[f] * costo_dia_vivienda[f] + 
+                              quicksum((quicksum((x[f, i, k] * costo_mat[i, k] + y[f, i, k] * costo_uso_mat[i, k] + 
+                                                  quicksum((z[f, i, k, p] * sueldo[p] + 
+                                                            quicksum(u[f, i, k, p, m] * costo_uso_maq[m] for m in M)) for p in P)) for k in Ki)) 
+                                                            for i in I)) 
+                                                            for f in F))
 
 #Optimizacion
 model.setObjective(funcion_objetivo, GRB.MINIMIZE)
