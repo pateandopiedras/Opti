@@ -54,18 +54,10 @@ def E():
             d[maq] = i+1
     return d
 
-F = range(1, A() + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
-I = range(1, len(B()) + 1) #Materiales de construcción
-#Variedad del material i
-def Ki(num):
-    return len(C()[num]) + 1
-P = range(1, D() + 1) #Trabajadores del proyecto
-M = range(1, len(E()) + 1) #Tipo de maquinaria m
-
 #PARÁMETROS
 def costo_diario_vivienda():
     d = {}
-    with open('data/c_vivienda.csv', 'r') as archivo:
+    with open('data/c_viviendas.csv', 'r') as archivo:
         data = list(csv.reader(archivo))
     data = data[1:]
     c = 1
