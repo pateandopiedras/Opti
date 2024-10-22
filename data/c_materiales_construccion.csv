@@ -1,8 +1,7 @@
-numero,tipo
-1,Cimientos y Estructuras
-2,Paredes
-3,Techo
-4,Instalaciones Electricas
-5,Instalaciones Sanitarias y Agua
-6,Ventanas y Puertas
-7,Acabados
+Cimientos y Estructuras
+Paredes
+Techo
+Instalaciones Electricas
+Instalaciones Sanitarias y Agua
+Ventanas y Puertas
+Acabados
