@@ -1,4 +1,4 @@
-tipo,cantidad
-v1,10
-v2,25
-v3,40
+tipo,cantidad,costo,max_maq,max_tra,min_tra
+v1,10,229000,5,8,4
+v2,25,229000,5,6,6
+v3,40,229000,5,9,3
