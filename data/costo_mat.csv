@@ -1,6 +1,29 @@
-material,variedad,costo,costo_fijo,cantidad,fc,cr,uso_diario
-ladrillos,cara,1000,100,10,0,0.4,9
-ladrillos,barata,500,200,50,0,0,6
-ladrillos,maoma,700,300,90,0.5,0.5,4
-cemento,cara,1500,400,73,0,0.1,3
-cemento,barata,700,500,85,0,1,4
+material,variedad,costo,costo_fijo,cantidad,fcalidad,creduccion,uso_diario likp, uso proyecto LIKP
+Cimientos y Estructuras,Imperial,30297,1515,100,0.71,0.8,4,20
+Cimientos y Estructuras,Easy,30297,1515,100,0.74,0.82,4,20
+Cimientos y Estructuras,Construmart,30297,1515,100,0.76,0.85,4,20
+Cimientos y Estructuras,Sodimac,30297,1515,100,0.79,0.9,4,20
+Paredes,Imperial,30297,1515,100,0.71,0.8,4,20
+Paredes,Easy,30297,1515,100,0.74,0.82,4,20
+Paredes,Construmart,30297,1515,100,0.76,0.85,4,20
+Paredes,Sodimac,30297,1515,100,0.79,0.88,4,20
+Techo,Imperial,30297,1515,100,0.71,0.8,4,20
+Techo,Easy,30297,1515,100,0.74,0.82,4,20
+Techo,Construmart,30297,1515,100,0.76,0.85,4,20
+Techo,Sodimac,30297,1515,100,0.79,0.88,4,20
+Instalaciones Electricas,Imperial,30297,1515,100,0.71,0.8,4,20
+Instalaciones Electricas,Easy,30297,1515,100,0.74,0.82,4,20
+Instalaciones Electricas,Construmart,30297,1515,100,0.76,0.85,4,20
+Instalaciones Electricas,Sodimac,30297,1515,100,0.79,0.88,4,20
+Instalaciones Sanitarias y Agua,Imperial,30297,1515,100,0.71,0.8,4,20
+Instalaciones Sanitarias y Agua,Easy,30297,1515,100,0.74,0.82,4,20
+Instalaciones Sanitarias y Agua,Construmart,30297,1515,100,0.76,0.85,4,20
+Instalaciones Sanitarias y Agua,Sodimac,30297,1515,100,0.79,0.88,4,20
+Ventanas y puertas,Imperial,30297,1515,100,0.71,0.8,4,20
+Ventanas y puertas,Easy,30297,1515,100,0.74,0.82,4,20
+Ventanas y puertas,Construmart,30297,1515,100,0.76,0.85,4,20
+Ventanas y puertas,Sodimac,30297,1515,100,0.79,0.88,4,20
+Acabados,Imperial,30297,1515,100,0.71,0.8,4,20
+Acabados,Easy,30297,1515,100,0.74,0.82,4,20
+Acabados,Construmart,30297,1515,100,0.76,0.85,4,20
+Acabados,Sodimac,30297,1515,100,0.79,0.88,4,20
