@@ -2,16 +2,16 @@ import csv
 
 #CONJUNTOS
 def A():
-   #d = {}
-   #c = 1
-   #with open('data/c_viviendas.csv', 'r') as archivo:
-        #data = list(csv.reader(archivo))
-    #data = data[1:]
-    #for l in data:
-        #for i in range(int(l[1])):
-            #d[c] = l[0]
-            #c+=1
-    return 7721
+    d = {}
+    c = 1
+    with open('data/c_viviendas.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    for l in data:
+        for i in range(int(l[1])):
+            d[c] = l[0]
+            c+=1
+    return d
 
 def B():
     d = {}
@@ -61,7 +61,7 @@ def costo_diario_vivienda():
         data = list(csv.reader(archivo))
     data = data[1:]
     c = 1
-    for v in range(1, A()+1):
+    for v in range(1, len(A())+1):
         d[c] = int(data[0][2])
         c+=1
     return d
@@ -69,13 +69,14 @@ def costo_diario_vivienda():
 def cantidad_material():
     d = {}
     with open('data/cant_material.csv', 'r') as archivo:
-        data = csv.reader(archivo)
-        next(data)
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    for v in A():
         for f in data:
-            vivienda, material, cantidad = f
-            d[B()[material], C()[vivienda]] = int(cantidad)
+            tipo_vivienda, material, cantidad = f
+            if A()[v] == tipo_vivienda:
+                d[B()[material], v] = int(cantidad)
     return d
-print(cantidad_material())
 
 def costo_unidad_material():
     d = {}
@@ -175,7 +176,7 @@ def cantidad_uso_material():
     m = B()
     for mat in m.keys():
         c = 1
-        for v in range(1, A()+1):
+        for v in range(1, len(A())+1):
             for l in data:
                 material, variedad, costo, costo_fijo, cantidad, fc, cr, uso_diario = l
                 if l[0] == mat:
@@ -192,7 +193,7 @@ def minimo_trabajadores():
         data = list(csv.reader(archivo))
     data = data[1:]
     c = 1
-    for v in range(1, A()+1):
+    for v in range(1, len(A())+1):
         d[c] = int(data[0][5])
         c+=1
     return d
@@ -203,7 +204,7 @@ def maximo_trabajadores():
         data = list(csv.reader(archivo))
     data = data[1:]
     c = 1
-    for v in range(1, A()+1):
+    for v in range(1, len(A())+1):
         d[c] = int(data[0][4])
         c+=1
     return d
@@ -231,7 +232,7 @@ def cantidad_maxima_maquinas():
         data = list(csv.reader(archivo))
     data = data[1:]
     c = 1
-    for v in range(1, A()+1):
+    for v in range(1, len(A())+1):
         d[c] = int(data[0][3])
         c+=1
     return d

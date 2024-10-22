@@ -3,16 +3,16 @@ from process_data import *
 
 #MODELO------------------------------------
 model = Model()
-model.setParam('TimeLimit', 1800) #60*30
+model.setParam('TimeLimit', 10) #60*30
 
 #CONJUNTOS---------------------------------
-F = range(1, A() + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
+F = range(1, 7721 + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
 I = range(1, len(B()) + 1) #Materiales de construcción
 #Ki = range(1, C() + 1) #Variedad del material i ###ARREGLAR
 #Variedad del material i
 def Ki(num):
     return len(C()[num]) + 1
-P = range(1, D() + 1) #Trabajadores del proyecto
+P = range(1, 57768 + 1) #Trabajadores del proyecto
 M = range(1, len(E()) + 1) #Tipo de maquinaria m
     
 #PARÁMETROS--------------------------------
@@ -27,19 +27,19 @@ costo_mat = {(i, k): costo_unidad_material()[i, k] for i in I for k in range(1, 
 #dik: Costo fijo en CLP asociado al uso del material k del tipo i
 costo_uso_mat = {(i, k): costo_uso_material()[i, k] for i in I for k in range(1, Ki(i))}
 #Xik: cantidad total disponible de la variante k del material del tipo i
-cant_variante_material = {(i, k): cantidad_variante_material()[i, k] for i in I for k in Ki}
+cant_variante_material = {(i, k): cantidad_variante_material()[i, k] for i in I for k in range(1, Ki(i))}
 #betaik: Factor de calidad del material k del tipo i
-calidad = {(i, k): factor_calidad()[i, k] for i in I for k in Ki}
+calidad = {(i, k): factor_calidad()[i, k] for i in I for k in range(1, Ki(i))}
 #bif: Factor mínimo de calidad como promedio ponderado de las variantes utilizadas, para cada i y para cada j
 calidad_promedio = {(i, f): factor_calidad_promedio()[i, f] for i in I for f in F}
 #deltaik: Coeficiente de reducción de material por mala calidad para la variante k del tipo de material i
-coef_red_mat = {(i, k): coef_reduccion_mat()[i, k] for i in I for k in Ki}
+coef_red_mat = {(i, k): coef_reduccion_mat()[i, k] for i in I for k in range(1, Ki(i))}
 #qp: Sueldo por día de trabajo que cobra p
 sueldo = {p: sueldo_trabajador()[p] for p in P}
 #likp: Cantidad de la variante k del material del tipo i que puede usar el trabajador p en un día
-cant_uso_mat = {(i, k, p): cantidad_uso_material()[i, k, p] for i in I for k in Ki for p in P}
+cant_uso_mat = {(i, k, p): cantidad_uso_material()[i, k, p] for i in I for k in range(1, Ki(i)) for p in P}
 #Likp: Cantidad máxima de la variante k del tipo i que puede usar p en la duración del proyecto
-cant_max_uso_mat = {(i, k, p): cantidad_max_uso_material()[i, k, p] for i in I for k in Ki for p in P}
+cant_max_uso_mat = {(i, k, p): cantidad_max_uso_material()[i, k, p] for i in I for k in range(1, Ki(i)) for p in P}
 #Rf: Cantidad mínima de personas requeridas para construir la vivienda f
 min_trabajadores = {f: minimo_trabajadores()[f] for f in F}
 #Sf: Cantidad máxima de personas requeridas para construir f
