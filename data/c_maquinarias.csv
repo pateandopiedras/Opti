@@ -1,6 +1,6 @@
 maquinaria,cantidad,costo
-m1,5,1000
-m2,7,1500
-m3,9,5000
-m4,7,1500
-m5,9,5000
+Plataforma Elevadora,1,110000
+Grua Movil,7,400000
+Carretillas,2,3188
+Herramientas de corte,5,3188
+Soldadura y fijacion,3,3188
