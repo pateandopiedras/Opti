@@ -141,7 +141,15 @@ def factor_calidad():
     return d
 
 def factor_calidad_promedio():
-    pass
+    d = {}
+    with open('data/c_viviendas.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    c = 1
+    for v in range(1, len(A())+1):
+        d[c] = int(data[0][6])
+        c+=1
+    return d
 
 def coef_reduccion_mat():
     d = {}
@@ -169,7 +177,6 @@ def sueldo_trabajador():
         c+=1
     return d
 
-#REVISARRR
 def cantidad_uso_material():
     d = {}
     with open('data/costo_mat.csv', 'r') as archivo:
@@ -187,7 +194,20 @@ def cantidad_uso_material():
     return d
 
 def cantidad_max_uso_material():
-    pass
+    d = {}
+    with open('data/costo_mat.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    m = B()
+    for mat in m.keys():
+        c = 1
+        for v in range(1, len(A())+1):
+            for l in data:
+                material, variedad, costo, costo_fijo, cantidad, fc, cr, uso_diario, uso_proyecto = l
+                if l[0] == mat:
+                    d[m[material], variedad, v] = int(uso_proyecto)
+                    c += 1
+    return d
 
 def minimo_trabajadores():
     d = {}

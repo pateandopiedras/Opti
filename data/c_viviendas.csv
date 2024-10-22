@@ -1,4 +1,4 @@
-tipo,cantidad,costo_por_dia,max_maq,max_tra,min_tra
-1,221,200000,4,8,2
-2,221,200000,4,8,2
-3,222,200000,4,8,2
+tipo,cantidad,costo_por_dia,max_maq,max_tra,min_tra,factor_calidad
+1,221,200000,4,8,2,0.73
+2,221,200000,4,8,2,0.73
+3,222,200000,4,8,2,0.73

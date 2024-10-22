@@ -17,7 +17,7 @@ M = range(1, len(E()) + 1) #Tipo de maquinaria m
     
 #PARÁMETROS--------------------------------
 #T: Plazo máximo, en días, de la duración del Plan de Reconstrucción
-max_plazo = 700
+max_plazo = 784
 #hf: Costo en CLP asociado a un día de construcción de la vivienda f
 costo_dia_vivienda = {f: costo_diario_vivienda()[f] for f in F}
 #aif: Cantidad exacta de material del tipo i que se necesita para una vivienda f
@@ -73,17 +73,17 @@ mu = model.addVars(F, P, M, vtype = GRB.BINARY, name = "mu_fpm")
 #R1 REVISARRRRR
 model.addConstrs((t[f] <= max_plazo for f in F), name = "R1")
 #R2
-model.addConstrs((quicksum(x[f, i, k] * coef_red_mat[i, k] for k in Ki) >= cant_material[i, f] for f in F for i in I), name = "R2")
+model.addConstrs((quicksum(x[f, i, k] * coef_red_mat[i, k] for k in range(1, Ki(i))) >= cant_material[i, f] for f in F for i in I), name = "R2")
 #R3
-model.addConstrs((quicksum(x[f, i, k] for f in F) <= cant_variante_material[i, k] for i in I for k in Ki), name = "R3")
+model.addConstrs((quicksum(x[f, i, k] for f in F) <= cant_variante_material[i, k] for i in I for k in range(1, Ki(i))), name = "R3")
 #R4
-model.addConstrs((quicksum(x[f, i, k] * calidad[i, k] for k in Ki) >= calidad_promedio[i, f] * quicksum(x[f, i, k] for k in Ki) for f in F for i in I), name = "R4")
+model.addConstrs((quicksum(x[f, i, k] * calidad[i, k] for k in range(1, Ki(i))) >= calidad_promedio[i, f] * quicksum(x[f, i, k] for k in Ki) for f in F for i in I), name = "R4")
 #R5
-model.addConstrs((x[f, i, k] <= cant_variante_material[i, k] * y[f, i, k] for f in F for i in I for k in Ki), name = "R5")
+model.addConstrs((x[f, i, k] <= cant_variante_material[i, k] * y[f, i, k] for f in F for i in I for k in range(1, Ki(i))), name = "R5")
 #R6
-model.addConstrs((quicksum(z[f, i, k, p] * cant_uso_mat[i, k, p] for f in F) <= cant_max_uso_mat[i, k, p] for i in I for k in Ki for p in P), name = "R6")
+model.addConstrs((quicksum(z[f, i, k, p] * cant_uso_mat[i, k, p] for f in F) <= cant_max_uso_mat[i, k, p] for i in I for k in range(1, Ki(i)) for p in P), name = "R6")
 #R7
-model.addConstrs((quicksum(quicksum(z[f, i, k, p] for k in Ki) for i in I) <= max_plazo * v[f, p] for f in F for p in P), name = "R7")
+model.addConstrs((quicksum(quicksum(z[f, i, k, p] for k in range(1, Ki(i))) for i in I) <= max_plazo * v[f, p] for f in F for p in P), name = "R7")
 #R8
 model.addConstrs((quicksum(v[f, p] for p in P) >= min_trabajadores[f] for f in F), name = "R8_1")
 model.addConstrs((quicksum(v[f, p] for p in P) <= max_trabajadores[f] for f in F), name = "R8_2")
@@ -92,11 +92,11 @@ model.addConstrs((quicksum(v[f, p] for f in F) <= 1 for p in P), name = "R9")
 #R10
 model.addConstrs((quicksum(quicksum(quicksum(u[f, i, k, p, m] for k in Ki) for i in I) for p in P) <= t[f] for f in F for m in M), name = "R10")
 #R11
-model.addConstrs((quicksum(z[f, i, k, p] * cant_uso_mat[i, k, p] + u[f, i, k, p, m] * cant_uso_mat[i, k, p] * rho[p, m] for p in P) >= x[f, i, k] for f in F for i in I for k in Ki), name = "R11")
+model.addConstrs((quicksum(z[f, i, k, p] * cant_uso_mat[i, k, p] + u[f, i, k, p, m] * cant_uso_mat[i, k, p] * rho[p, m] for p in P) >= x[f, i, k] for f in F for i in I for k in range(1, Ki(i))), name = "R11")
 #R12
-model.addConstrs((quicksum(quicksum(z[f, i, k, p] + u[f, i, k, p, m] for k in Ki) for i in I) <= t[f] for f in F for p in P for m in M), name = "R12")
+model.addConstrs((quicksum(quicksum(z[f, i, k, p] + u[f, i, k, p, m] for k in range(1, Ki(i))) for i in I) <= t[f] for f in F for p in P for m in M), name = "R12")
 #R13
-model.addConstrs((quicksum(quicksum(u[f, i, k, p, m] for k in Ki) for i in I) <= max_plazo * mu[f, p, m] for f in F for p in P for m in M), name = "R13")
+model.addConstrs((quicksum(quicksum(u[f, i, k, p, m] for k in range(1, Ki(i))) for i in I) <= max_plazo * mu[f, p, m] for f in F for p in P for m in M), name = "R13")
 #R14
 model.addConstrs((mu[f, p, m] <= rho[p, m] for f in F for p in P for m in M), name = "R14")
 #R15
@@ -111,7 +111,7 @@ model.update()
 funcion_objetivo = (quicksum((t[f] * costo_dia_vivienda[f] + 
                               quicksum((quicksum((x[f, i, k] * costo_mat[i, k] + y[f, i, k] * costo_uso_mat[i, k] + 
                                                   quicksum((z[f, i, k, p] * sueldo[p] + 
-                                                            quicksum(u[f, i, k, p, m] * costo_uso_maq[m] for m in M)) for p in P)) for k in Ki)) 
+                                                            quicksum(u[f, i, k, p, m] * costo_uso_maq[m] for m in M)) for p in P)) for k in range(1, Ki(i)))) 
                                                             for i in I)) 
                                                             for f in F))
 
