@@ -77,7 +77,7 @@ model.addConstrs((quicksum(x[f, i, k] * coef_red_mat[i, k] for k in range(1, Ki(
 #R3
 model.addConstrs((quicksum(x[f, i, k] for f in F) <= cant_variante_material[i, k] for i in I for k in range(1, Ki(i))), name = "R3")
 #R4
-model.addConstrs((quicksum(x[f, i, k] * calidad[i, k] for k in range(1, Ki(i))) >= calidad_promedio[i, f] * quicksum(x[f, i, k] for k in Ki) for f in F for i in I), name = "R4")
+model.addConstrs((quicksum(x[f, i, k] * calidad[i, k] for k in range(1, Ki(i))) >= calidad_promedio[i, f] * quicksum(x[f, i, k] for k in range(1, Ki(i))) for f in F for i in I), name = "R4")
 #R5
 model.addConstrs((x[f, i, k] <= cant_variante_material[i, k] * y[f, i, k] for f in F for i in I for k in range(1, Ki(i))), name = "R5")
 #R6
@@ -90,7 +90,7 @@ model.addConstrs((quicksum(v[f, p] for p in P) <= max_trabajadores[f] for f in F
 #R9
 model.addConstrs((quicksum(v[f, p] for f in F) <= 1 for p in P), name = "R9")
 #R10
-model.addConstrs((quicksum(quicksum(quicksum(u[f, i, k, p, m] for k in Ki) for i in I) for p in P) <= t[f] for f in F for m in M), name = "R10")
+model.addConstrs((quicksum(quicksum(quicksum(u[f, i, k, p, m] for k in range(1, Ki(i))) for i in I) for p in P) <= t[f] for f in F for m in M), name = "R10")
 #R11
 model.addConstrs((quicksum(z[f, i, k, p] * cant_uso_mat[i, k, p] + u[f, i, k, p, m] * cant_uso_mat[i, k, p] * rho[p, m] for p in P) >= x[f, i, k] for f in F for i in I for k in range(1, Ki(i))), name = "R11")
 #R12
@@ -146,12 +146,12 @@ for f in F:
 
 
 for i in I:
-    for k in Ki:
+    for k in range(1, Ki(i)):
         costo = [i, k, costo_mat[i, k].x]
         cost_unit_mat.append(costo)
 
 for i in I:
-    for k in Ki:
+    for k in range(1, Ki(i)):
         costo = [i, k, costo_uso_mat[i, k].x]
         cost_fij_mat.append(costo)
 
