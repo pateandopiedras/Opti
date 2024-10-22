@@ -32,8 +32,6 @@ def C():
             d[B()[material]] = variedades.split(';')
     return d
 
-print(C())
-
 def D():
     #d = {}
     #c = 1
