@@ -1,3 +1,8 @@
 material,variedades
-ladrillos,cara;barata;maoma
-cemento,cara;barata
+Cimientos y Estructuras,Imperial, Easy, Construmart, Sodimac,Cemento Polpaico,Cintac
+Paredes,Imperial, Easy, Construmart, Sodimac,Cemento Polpaico,Cintac,Volcán
+Techo,Imperial, Easy, Construmart, Sodimac,Cemento Polpaico,Cintac,Volcán
+Instalaciones Electricas,Imperial, Easy, Construmart, Sodimac,Tauron,Ilumina,Schneider Electric Chile
+Instalaciones Sanitarias y Agua,Imperial, Easy, Construmart, Sodimac
+Ventanas y puertas,Imperial, Easy, Construmart, Sodimac
+Acabados,Imperial, Easy, Construmart, Sodimac,Lanco
