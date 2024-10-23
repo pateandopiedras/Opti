@@ -16,9 +16,10 @@ def A():
 def B():
     d = {}
     with open('data/c_materiales_construccion.csv', 'r') as archivo:
-        data = csv.reader(archivo)
-        for i, m in enumerate(data):
-            d[m[0]] = i+1
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    for i, m in enumerate(data):
+        d[m[0]] = i+1
     return d
 
 def C():
@@ -87,7 +88,7 @@ def costo_unidad_material():
     for mat in m.keys():
         c = 1
         for l in data:
-            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            material, variedad, costo, costo_fijo, cantidad, fc, cr, hola, chao = l
             if l[0] == mat:
                 d[m[material], c] = int(costo)
                 c += 1
@@ -102,7 +103,7 @@ def costo_uso_material():
     for mat in m.keys():
         c = 1
         for l in data:
-            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            material, variedad, costo, costo_fijo, cantidad, fc, cr, h, gg = l
             if l[0] == mat:
                 d[m[material], c] = int(costo_fijo)
                 c += 1
@@ -117,7 +118,7 @@ def cantidad_variante_material():
     for mat in m.keys():
         c = 1
         for l in data:
-            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            material, variedad, costo, costo_fijo, cantidad, fc, cr, cc, gg = l
             if l[0] == mat:
                 d[m[material], c] = int(cantidad)
                 c += 1
@@ -132,7 +133,7 @@ def factor_calidad():
     for mat in m.keys():
         c = 1
         for l in data:
-            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            material, variedad, costo, costo_fijo, cantidad, fc, cr, cc, gg = l
             if l[0] == mat:
                 d[m[material], c] = float(fc)
                 c += 1
@@ -158,7 +159,7 @@ def coef_reduccion_mat():
     for mat in m.keys():
         c = 1
         for l in data:
-            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            material, variedad, costo, costo_fijo, cantidad, fc, cr, cc, gg = l
             if l[0] == mat:
                 d[m[material], c] = float(cr)
                 c += 1
@@ -170,7 +171,7 @@ def sueldo_trabajador():
         data = list(csv.reader(archivo))
     data = data[1:]
     c = 1
-    for v in range(1, D()+1):
+    for v in range(1, 3320+1):
         d[c] = int(data[0][2])
         c+=1
     return d
@@ -185,7 +186,7 @@ def cantidad_uso_material():
         c = 1
         for v in range(1, len(A())+1):
             for l in data:
-                material, variedad, costo, costo_fijo, cantidad, fc, cr, uso_diario = l
+                material, variedad, costo, costo_fijo, cantidad, fc, cr, uso_diario, solouna = l
                 if l[0] == mat:
                     d[m[material], variedad, v] = int(uso_diario)
                     c += 1
