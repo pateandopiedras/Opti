@@ -230,7 +230,22 @@ def maximo_trabajadores():
     return d
 
 def utiliza_maquinaria():
-    pass
+    d = {}
+    with open('data/maquinas.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    P = range(1, 3320 + 1)
+    for worker in P:
+        for l in data:
+            trabajador, maq1, maq2, maq3 = l
+            if l[0] == worker:
+                d[trabajador, 1] = int(maq1)
+                d[trabajador, 2] = int(maq2)
+                d[trabajador, 3] = int(maq3)
+                c += 1
+    return d
+                
+            
 
 def ponderador_eficiencia():
     d = {}

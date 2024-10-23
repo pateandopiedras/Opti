@@ -3,7 +3,7 @@ from process_data import *
 
 #MODELO------------------------------------
 model = Model()
-model.setParam('TimeLimit', 10) #60*30
+model.setParam('TimeLimit', 1800) #60*30
 
 #CONJUNTOS---------------------------------
 F = range(1, 664 + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
@@ -55,17 +55,17 @@ costo_uso_maq = {m: costo_uso_maquina()[m] for m in M}
 
 #VARIABLES-------------------------------------
 #Cantidad, en días de trabajo, que demora la construcción de la vivienda f
-t = model.addVars(F, vtype = GRB.INTEGER, name = "t_f")
+t = model.addVars(F, vtype = GRB.CONTINUOUS, name = "t_f")
 #Cantidad a utilizar de la variante k del tipo de material i en la construcción de f
-x = model.addVars(F, I, Ki, vtype = GRB.INTEGER, name = "x_fik")
+x = model.addVars(F, I, Ki, vtype = GRB.CONTINUOUS, name = "x_fik")
 #Indica si se utiliza la opción k del material i en la construcción de f
 y = model.addVars(F, I, Ki, vtype = GRB.BINARY, name = "y_fik")
 #Días de trabajo realizadas por p (manual) con la variante k del material i para la construcción de f
-z = model.addVars(F, I, Ki, P, vtype = GRB.INTEGER, name = "z_fikp")
+z = model.addVars(F, I, Ki, P, vtype = GRB.CONTINUOUS, name = "z_fikp")
 #Indica si p está realizando labores en f
-v = model.addVars(F, P, vtype = GRB.INTEGER, name = "v_fp")
+v = model.addVars(F, P, vtype = GRB.CONTINUOUS, name = "v_fp")
 #Cantidad de días de trabajo efectuados a través de la máquina m por p en f sobre variante k del material i
-u = model.addVars(F, I, Ki, P, M, vtype = GRB.INTEGER, name = "u_fikpm")
+u = model.addVars(F, I, Ki, P, M, vtype = GRB.CONTINUOUS, name = "u_fikpm")
 #Indica si se utiliza la máquina m por p en f
 mu = model.addVars(F, P, M, vtype = GRB.BINARY, name = "mu_fpm")
 
