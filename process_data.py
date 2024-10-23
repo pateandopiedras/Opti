@@ -245,8 +245,6 @@ def utiliza_maquinaria():
                 c += 1
     return d
                 
-            
-
 def ponderador_eficiencia():
     d = {}
     with open('data/pond_efi_gamma.csv', 'r') as archivo:
