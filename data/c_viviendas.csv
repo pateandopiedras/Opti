@@ -1,2 +1,2 @@
-cantidad,costo,max_maq,max_tra,min_tra
-664;90263;4;8;2
+cantidad,costo,max_maq,max_tra,min_tra,factorcalidad bif
+664,90263,4,8,2,0.73
