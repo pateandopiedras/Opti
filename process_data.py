@@ -13,6 +13,8 @@ def A():
             c+=1
     return d
 
+print(A())
+
 def B():
     d = {}
     with open('data/c_materiales_construccion.csv', 'r') as archivo:
@@ -42,7 +44,7 @@ def D():
         #for i in range(int(l[1])):
             #d[c] = l[0]
             #c+=1
-    return 57768
+    return 3320
 
 def E():
     d = {}
@@ -87,11 +89,12 @@ def costo_unidad_material():
     for mat in m.keys():
         c = 1
         for l in data:
-            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            material, variedad, costo, costo_fijo, cantidad, fc, cr, ud, up = l
             if l[0] == mat:
                 d[m[material], c] = int(costo)
                 c += 1
     return d
+
 
 def costo_uso_material():
     d = {}
@@ -102,7 +105,7 @@ def costo_uso_material():
     for mat in m.keys():
         c = 1
         for l in data:
-            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            material, variedad, costo, costo_fijo, cantidad, fc, cr, ud, up = l
             if l[0] == mat:
                 d[m[material], c] = int(costo_fijo)
                 c += 1
@@ -117,7 +120,7 @@ def cantidad_variante_material():
     for mat in m.keys():
         c = 1
         for l in data:
-            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            material, variedad, costo, costo_fijo, cantidad, fc, cr, ud, up = l
             if l[0] == mat:
                 d[m[material], c] = int(cantidad)
                 c += 1
@@ -132,7 +135,7 @@ def factor_calidad():
     for mat in m.keys():
         c = 1
         for l in data:
-            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            material, variedad, costo, costo_fijo, cantidad, fc, cr, ud, up = l
             if l[0] == mat:
                 d[m[material], c] = float(fc)
                 c += 1
@@ -144,9 +147,10 @@ def factor_calidad_promedio():
         data = list(csv.reader(archivo))
     data = data[1:]
     c = 1
+    materiales = B()
     for v in range(1, len(A())+1):
-        d[c] = int(data[0][6])
-        c+=1
+        for m in materiales.values():
+            d[m, v] = float(data[0][6])
     return d
 
 def coef_reduccion_mat():
@@ -158,7 +162,7 @@ def coef_reduccion_mat():
     for mat in m.keys():
         c = 1
         for l in data:
-            material, variedad, costo, costo_fijo, cantidad, fc, cr = l
+            material, variedad, costo, costo_fijo, cantidad, fc, cr, ud, up = l
             if l[0] == mat:
                 d[m[material], c] = float(cr)
                 c += 1
@@ -181,14 +185,13 @@ def cantidad_uso_material():
         data = list(csv.reader(archivo))
     data = data[1:]
     m = B()
+    var = C()
     for mat in m.keys():
-        c = 1
-        for v in range(1, len(A())+1):
+        for p in range(1, D()+1):
             for l in data:
-                material, variedad, costo, costo_fijo, cantidad, fc, cr, uso_diario = l
+                material, variedad, costo, costo_fijo, cantidad, fc, cr, uso_diario, up = l
                 if l[0] == mat:
-                    d[m[material], variedad, v] = int(uso_diario)
-                    c += 1
+                    d[m[material], var[m[mat]].index(variedad)+1, p] = int(uso_diario)
     return d
 
 def cantidad_max_uso_material():
@@ -197,14 +200,13 @@ def cantidad_max_uso_material():
         data = list(csv.reader(archivo))
     data = data[1:]
     m = B()
+    var = C()
     for mat in m.keys():
-        c = 1
-        for v in range(1, len(A())+1):
+        for p in range(1, D()+1):
             for l in data:
                 material, variedad, costo, costo_fijo, cantidad, fc, cr, uso_diario, uso_proyecto = l
                 if l[0] == mat:
-                    d[m[material], variedad, v] = int(uso_proyecto)
-                    c += 1
+                    d[m[material], var[m[mat]].index(variedad)+1, p] = int(uso_proyecto)
     return d
 
 def minimo_trabajadores():
@@ -237,15 +239,13 @@ def utiliza_maquinaria():
     P = range(1, 3320 + 1)
     for worker in P:
         for l in data:
+            l = l[0].split(';')
             trabajador, maq1, maq2, maq3 = l
-            if l[0] == worker:
-                d[trabajador, 1] = int(maq1)
-                d[trabajador, 2] = int(maq2)
-                d[trabajador, 3] = int(maq3)
-                c += 1
-    return d
-                
-            
+            if int(l[0]) == worker:
+                d[int(trabajador), 1] = int(maq1)
+                d[int(trabajador), 2] = int(maq2)
+                d[int(trabajador), 3] = int(maq3)
+    return d      
 
 def ponderador_eficiencia():
     d = {}

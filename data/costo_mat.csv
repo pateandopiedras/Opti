@@ -1,4 +1,4 @@
-material,variedad,costo,costo_fijo,cantidad,fcalidad,creduccion,uso_diario likp, uso proyecto LIKP
+material,variedad,costo,costo_fijo,cantidad,fcalidad,creduccion,uso_diario likp,uso proyecto LIKP
 Cimientos y Estructuras,Imperial,30297,1515,100,0.71,0.8,4,20
 Cimientos y Estructuras,Easy,30297,1515,100,0.74,0.82,4,20
 Cimientos y Estructuras,Construmart,30297,1515,100,0.76,0.85,4,20
@@ -19,10 +19,10 @@ Instalaciones Sanitarias y Agua,Imperial,30297,1515,80,0.71,0.8,4,20
 Instalaciones Sanitarias y Agua,Easy,30297,1515,80,0.74,0.82,4,20
 Instalaciones Sanitarias y Agua,Construmart,30297,1515,80,0.76,0.85,4,20
 Instalaciones Sanitarias y Agua,Sodimac,30297,1515,80,0.79,0.88,4,20
-Ventanas y puertas,Imperial,30297,1515,20,0.71,0.8,4,20
-Ventanas y puertas,Easy,30297,1515,20,0.74,0.82,4,20
-Ventanas y puertas,Construmart,30297,1515,20,0.76,0.85,4,20
-Ventanas y puertas,Sodimac,30297,1515,20,0.79,0.88,4,20
+Ventanas y Puertas,Imperial,30297,1515,20,0.71,0.8,4,20
+Ventanas y Puertas,Easy,30297,1515,20,0.74,0.82,4,20
+Ventanas y Puertas,Construmart,30297,1515,20,0.76,0.85,4,20
+Ventanas y Puertas,Sodimac,30297,1515,20,0.79,0.88,4,20
 Acabados,Imperial,30297,1515,80,0.71,0.8,4,20
 Acabados,Easy,30297,1515,80,0.74,0.82,4,20
 Acabados,Construmart,30297,1515,80,0.76,0.85,4,20
