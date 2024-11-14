@@ -18,9 +18,10 @@ print(A())
 def B():
     d = {}
     with open('data/c_materiales_construccion.csv', 'r') as archivo:
-        data = csv.reader(archivo)
-        for i, m in enumerate(data):
-            d[m[0]] = i+1
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    for i, m in enumerate(data):
+        d[m[0]] = i+1
     return d
 
 def C():
@@ -174,7 +175,7 @@ def sueldo_trabajador():
         data = list(csv.reader(archivo))
     data = data[1:]
     c = 1
-    for v in range(1, D()+1):
+    for v in range(1, 3320+1):
         d[c] = int(data[0][2])
         c+=1
     return d

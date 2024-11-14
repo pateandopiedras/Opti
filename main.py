@@ -81,7 +81,7 @@ costo_uso_maq = {m: f17[m] for m in M}
 #VARIABLES-------------------------------------
 Kiv = {i: len(C()[i]) + 1 for i in I}
 #Cantidad, en días de trabajo, que demora la construcción de la vivienda f
-t = model.addVars(F, vtype = GRB.CONTINUOUS, name = "t_f")
+t = model.addVars(F, Kiv, vtype = GRB.CONTINUOUS, name = "t_f")
 #Cantidad a utilizar de la variante k del tipo de material i en la construcción de f
 x = model.addVars(F, I, Kiv, vtype = GRB.CONTINUOUS, name = "x_fik")
 #Indica si se utiliza la opción k del material i en la construcción de f
