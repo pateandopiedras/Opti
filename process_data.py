@@ -13,8 +13,6 @@ def A():
             c+=1
     return d
 
-print(A())
-
 def B():
     d = {}
     with open('data/c_materiales_construccion.csv', 'r') as archivo:
@@ -45,7 +43,7 @@ def D():
         #for i in range(int(l[1])):
             #d[c] = l[0]
             #c+=1
-    return 3320
+    return 250
 
 def E():
     d = {}
@@ -95,7 +93,6 @@ def costo_unidad_material():
                 d[m[material], c] = int(costo)
                 c += 1
     return d
-
 
 def costo_uso_material():
     d = {}
@@ -175,7 +172,7 @@ def sueldo_trabajador():
         data = list(csv.reader(archivo))
     data = data[1:]
     c = 1
-    for v in range(1, 3320+1):
+    for v in range(1, 250+1):
         d[c] = int(data[0][2])
         c+=1
     return d
@@ -237,7 +234,7 @@ def utiliza_maquinaria():
     with open('data/maquinas.csv', 'r') as archivo:
         data = list(csv.reader(archivo))
     data = data[1:]
-    P = range(1, 3320 + 1)
+    P = range(1, 250 + 1)
     for worker in P:
         for l in data:
             l = l[0].split(';')
