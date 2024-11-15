@@ -55,7 +55,7 @@ def E():
             d[maq] = i+1
     return d
 
-#PARÁMETROS
+#FUNCIONES PARÁMETROS
 def costo_diario_vivienda():
     d = {}
     with open('data/c_viviendas.csv', 'r') as archivo:
