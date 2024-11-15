@@ -192,11 +192,11 @@ if model.status == GRB.OPTIMAL:
         costo = [m, costo_uso_maq[m]]
         cost_maq.append(costo)
 
-    print(cost_viv)
-    print(cost_unit_mat)
-    print(cost_fij_mat)
-    print(cost_sueld)
-    print(cost_maq)
+    #print(cost_viv)
+    #print(cost_unit_mat)
+    #print(cost_fij_mat)
+    #print(cost_sueld)
+    #print(cost_maq)
 
 elif model.status == GRB.INFEASIBLE:
     print("El modelo es infactible.")
