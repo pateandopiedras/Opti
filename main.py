@@ -4,12 +4,12 @@ from process_data import *
 #MODELO------------------------------------
 model = Model()
 model.setParam('TimeLimit', 1800) #60*30
-#model.setParam('Presolve', 2)  # Presolve agresivo
+#model.setParam('Presolve', 2)         # Presolve agresivo
 #model.setParam('MIPFocus', 1)         # Enfoque en soluciones factibles rápidas
 #model.setParam('Threads', 4)          # Ajusta según la disponibilidad de CPU
 #model.setParam('Heuristics', 0.1)     # Aumenta el uso de heurísticas
 #model.setParam('NodefileStart', 0.5)  # Comienza a escribir en disco al usar el 50% de RAM
-model.setParam('MIPGap', 0.1)        # Permite una brecha de 5% en la solución óptima
+model.setParam('MIPGap', 0.05)         # Permite una brecha de 5% en la solución óptima
 
 #CONJUNTOS---------------------------------
 F = range(1, 50 + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
@@ -164,7 +164,7 @@ if model.status == GRB.OPTIMAL:
     cost_sueld = []
     cost_maq = []
 
-    print(f'El costo mínimo es: {model.ObjVal} $CLP necesarios para construir una vivienda')
+    print(f'El costo mínimo es: {model.ObjVal} $CLP')
 
     for f in F:
         print(f'La construcción de la vivienda {f} toma {t[f].x} dias')

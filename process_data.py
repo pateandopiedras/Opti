@@ -34,16 +34,16 @@ def C():
     return d
 
 def D():
-    #d = {}
-    #c = 1
-    #with open('data/c_trabajadores.csv', 'r') as archivo:
-       #data = list(csv.reader(archivo))
-    #data = data[1:]
-    #for l in data:
-        #for i in range(int(l[1])):
-            #d[c] = l[0]
-            #c+=1
-    return 250
+    d = {}
+    c = 1
+    with open('data/c_trabajadores.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    data = data[1:]
+    for l in data:
+        for i in range(int(l[1])):
+            d[c] = l[0]
+            c+=1
+    return d
 
 def E():
     d = {}
@@ -172,7 +172,7 @@ def sueldo_trabajador():
         data = list(csv.reader(archivo))
     data = data[1:]
     c = 1
-    for v in range(1, 250+1):
+    for v in range(1, len(D())+1):
         d[c] = int(data[0][2])
         c+=1
     return d
@@ -185,7 +185,7 @@ def cantidad_uso_material():
     m = B()
     var = C()
     for mat in m.keys():
-        for p in range(1, D()+1):
+        for p in range(1, len(D())+1):
             for l in data:
                 material, variedad, costo, costo_fijo, cantidad, fc, cr, uso_diario, up = l
                 if l[0] == mat:
@@ -200,7 +200,7 @@ def cantidad_max_uso_material():
     m = B()
     var = C()
     for mat in m.keys():
-        for p in range(1, D()+1):
+        for p in range(1, len(D())+1):
             for l in data:
                 material, variedad, costo, costo_fijo, cantidad, fc, cr, uso_diario, uso_proyecto = l
                 if l[0] == mat:
@@ -234,7 +234,7 @@ def utiliza_maquinaria():
     with open('data/maquinas.csv', 'r') as archivo:
         data = list(csv.reader(archivo))
     data = data[1:]
-    P = range(1, 250 + 1)
+    P = range(1, len(D()) + 1)
     for worker in P:
         for l in data:
             l = l[0].split(';')
@@ -252,7 +252,7 @@ def ponderador_eficiencia():
     data = data[1:]
     for m in E().keys():
         c = 1
-        for v in range(1, D()+1):
+        for v in range(1, len(D())+1):
             for l in data:
                 if l[0] == m:
                     d[v, E()[m]] = float(data[0][1])
