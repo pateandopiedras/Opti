@@ -4,21 +4,21 @@ from process_data import *
 #MODELO------------------------------------
 model = Model()
 model.setParam('TimeLimit', 1800) #60*30
-#model.setParam('Presolve', 2)         # Presolve agresivo
+model.setParam('Presolve', 2)         # Presolve nivel x
 #model.setParam('MIPFocus', 1)         # Enfoque en soluciones factibles rápidas
 #model.setParam('Threads', 4)          # Ajusta según la disponibilidad de CPU
 #model.setParam('Heuristics', 0.1)     # Aumenta el uso de heurísticas
 #model.setParam('NodefileStart', 0.5)  # Comienza a escribir en disco al usar el 50% de RAM
-model.setParam('MIPGap', 0.05)         # Permite una brecha de 5% en la solución óptima
+model.setParam('MIPGap', 0.01)         # Permite una brecha de x% en la solución óptima
 
 #CONJUNTOS---------------------------------
-F = range(1, 50 + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
+F = range(1, len(A()) + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
 I = range(1, len(B()) + 1) #Materiales de construcción
 def Ki(num):
     return len(C()[num]) + 1
 d_ki = C()
-P = range(1, 250 + 1) #Trabajadores del proyecto
-M = range(1, len(E()) + 1) #Tipo de maquinaria m
+P = range(1, len(D()) + 1) #Trabajadores del proyecto
+M = range(1, len(E()) + 1) #Tipo de maquinaria m
     
 #PARÁMETROS--------------------------------
 f1 = costo_diario_vivienda()
@@ -40,7 +40,7 @@ f16 = cantidad_maxima_maquinas()
 f17 = costo_uso_maquina()
 
 #T: Plazo máximo, en días, de la duración del Plan de Reconstrucción
-max_plazo = 784
+max_plazo = duracion_proyecto()[1]
 #hf: Costo en CLP asociado a un día de construcción de la vivienda f
 costo_dia_vivienda = {f: f1[f] for f in F}
 #aif: Cantidad exacta de material del tipo i que se necesita para una vivienda f
@@ -84,17 +84,17 @@ t = model.addVars(F, vtype = GRB.CONTINUOUS, name = "t_f")
 x = model.addVars(F, I, Kiv, vtype = GRB.CONTINUOUS, name = "x_fik")
 #Indica si se utiliza la opción k del material i en la construcción de f
 y = model.addVars(F, I, Kiv, vtype = GRB.BINARY, name = "y_fik")
-#Días de trabajo realizadas por p (manual) con la variante k del material i para la construcción de f
+#Días de trabajo realizados por p (manual) con la variante k del material i para la construcción de f
 z = model.addVars(F, I, Kiv, P, vtype = GRB.CONTINUOUS, name = "z_fikp")
 #Indica si p está realizando labores en f
-v = model.addVars(F, P, vtype = GRB.CONTINUOUS, name = "v_fp")
+v = model.addVars(F, P, vtype = GRB.BINARY, name = "v_fp")
 #Cantidad de días de trabajo efectuados a través de la máquina m por p en f sobre variante k del material i
 u = model.addVars(F, I, Kiv, P, M, vtype = GRB.CONTINUOUS, name = "u_fikpm")
 #Indica si se utiliza la máquina m por p en f
 mu = model.addVars(F, P, M, vtype = GRB.BINARY, name = "mu_fpm")
 
 #RESTRICCIONES---------------------------------
-#R1 REVISARRRRR
+#R1
 model.addConstrs((t[f] <= max_plazo for f in F), name = "R1")
 #R2
 model.addConstrs((quicksum(x[f, i, k] * coef_red_mat[i, k] for k in range(1, len(d_ki[i]) + 1)) >= cant_material[i, f] for f in F for i in I), name = "R2")
@@ -115,16 +115,12 @@ model.addConstrs((quicksum(v[f, p] for p in P) <= max_trabajadores[f] for f in F
 model.addConstrs((quicksum(z[f, i, k, p] * cant_uso_mat[i, k, p] + u[f, i, k, p, m] * cant_uso_mat[i, k, p] * rho[p, m] for p in P) >= x[f, i, k] for f in F for i in I for k in range(1, len(d_ki[i]) + 1) for m in M), name = "R9")
 #R10
 model.addConstrs((quicksum(z[f, i, k, p] + u[f, i, k, p, m] for i in I for k in range(1, len(d_ki[i]) + 1) for m in M) <= t[f] for f in F for p in P), name = "R10")
-
 #R11
 model.addConstrs((quicksum(z[f, i, k, p] + u[f, i, k, p, m] for f in F for i in I for k in range(1, len(d_ki[i]) + 1) for m in M) <= max_plazo for p in P), name = "R11")
-
 #R12
 model.addConstrs((quicksum(u[f, i, k, p, m] for i in I for k in range(1, len(d_ki[i]) + 1) for p in P) <= t[f] for f in F for m in M), name = "R12")
-
 #R13
 model.addConstrs((quicksum(u[f, i, k, p, m] for f in F for i in I for k in range(1, len(d_ki[i]) + 1) for p in P) <= max_plazo for m in M), name = "R13")
-
 #R14
 model.addConstrs((quicksum(u[f, i, k, p, m] for i in I for k in range(1, len(d_ki[i]) + 1)) <= max_plazo * mu[f, p, m] for f in F for p in P for m in M), name = "R14")
 #R15
@@ -163,16 +159,52 @@ if model.status == GRB.OPTIMAL:
     cost_fij_mat = []
     cost_sueld = []
     cost_maq = []
-
-    print(f'El costo mínimo es: {model.ObjVal} $CLP')
+    costo_viviendas = 0.0
+    costo_uso_maquinas = 0.0
+    costo_sueldo_trabajadores = 0
+    costo_total = 0.0
 
     for f in F:
-        print(f'La construcción de la vivienda {f} toma {t[f].x} dias')
+        costo = 0.0
+        for i in I:
+            c = 1
+            for k in d_ki[i]:
+                costo += y[f, i, c].x * x[f, i, c].x * f3[i, c]
+                c += 1
+        print(f'El costo de la vivienda {f} es de {costo} $CLP')
+        costo_viviendas += float(costo)
+
+    #for p in P:
+        #costo = 0.0
+        #for f in F:
+            #for i in I:
+                #c = 1
+                #for k in d_ki[i]:
+                    #costo += z[f, i, k, p].x * sueldo[p]
+                    #c += 1
+        #costo_sueldo_trabajadores += float(costo)
+    #print(costo_sueldo_trabajadores)
+
+    #for m in M:
+        #costo = 0.0
+        #for p in P:
+            #for f in F:
+                #for i in I:
+                    #c = 1
+                    #for k in d_ki[i]:
+                        #costo += u[f, i, k, p, m].x * (costo_uso_maq[m] + sueldo[p])
+                        #c += 1
+        #costo_uso_maquinas += float(costo)
+    #print(costo_uso_maquinas)
+
+    #costo_total = costo_viviendas + costo_sueldo_trabajadores + costo_uso_maquinas
+
+    #for f in F:
+        #print(f'La construcción de la vivienda {f} toma {t[f].x} dias')
 
     for f in F:
         costo = [f, costo_dia_vivienda[f]]
         cost_viv.append(costo)
-
 
     for i in I:
         for k in range(1, Ki(i)):
@@ -191,12 +223,6 @@ if model.status == GRB.OPTIMAL:
     for m in M:
         costo = [m, costo_uso_maq[m]]
         cost_maq.append(costo)
-
-    #print(cost_viv)
-    #print(cost_unit_mat)
-    #print(cost_fij_mat)
-    #print(cost_sueld)
-    #print(cost_maq)
 
 elif model.status == GRB.INFEASIBLE:
     print("El modelo es infactible.")
