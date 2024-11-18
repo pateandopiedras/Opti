@@ -9,15 +9,15 @@ model.setParam('TimeLimit', 1800) #60*30
 #model.setParam('Threads', 4)          # Ajusta según la disponibilidad de CPU
 #model.setParam('Heuristics', 0.1)     # Aumenta el uso de heurísticas
 #model.setParam('NodefileStart', 0.5)  # Comienza a escribir en disco al usar el 50% de RAM
-model.setParam('MIPGap', 0.05)         # Permite una brecha de 5% en la solución óptima
+model.setParam('MIPGap', 0.01)         # Permite una brecha de 5% en la solución óptima
 
 #CONJUNTOS---------------------------------
-F = range(1, 50 + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
+F = range(1, 25 + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
 I = range(1, len(B()) + 1) #Materiales de construcción
 def Ki(num):
     return len(C()[num]) + 1
 d_ki = C()
-P = range(1, 250 + 1) #Trabajadores del proyecto
+P = range(1, 50 + 1) #Trabajadores del proyecto
 M = range(1, len(E()) + 1) #Tipo de maquinaria m
     
 #PARÁMETROS--------------------------------
@@ -87,14 +87,14 @@ y = model.addVars(F, I, Kiv, vtype = GRB.BINARY, name = "y_fik")
 #Días de trabajo realizadas por p (manual) con la variante k del material i para la construcción de f
 z = model.addVars(F, I, Kiv, P, vtype = GRB.CONTINUOUS, name = "z_fikp")
 #Indica si p está realizando labores en f
-v = model.addVars(F, P, vtype = GRB.CONTINUOUS, name = "v_fp")
+v = model.addVars(F, P, vtype = GRB.BINARY, name = "v_fp")
 #Cantidad de días de trabajo efectuados a través de la máquina m por p en f sobre variante k del material i
 u = model.addVars(F, I, Kiv, P, M, vtype = GRB.CONTINUOUS, name = "u_fikpm")
 #Indica si se utiliza la máquina m por p en f
 mu = model.addVars(F, P, M, vtype = GRB.BINARY, name = "mu_fpm")
 
 #RESTRICCIONES---------------------------------
-#R1 REVISARRRRR
+#R1
 model.addConstrs((t[f] <= max_plazo for f in F), name = "R1")
 #R2
 model.addConstrs((quicksum(x[f, i, k] * coef_red_mat[i, k] for k in range(1, len(d_ki[i]) + 1)) >= cant_material[i, f] for f in F for i in I), name = "R2")
