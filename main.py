@@ -4,12 +4,12 @@ from process_data import *
 #MODELO------------------------------------
 model = Model()
 model.setParam('TimeLimit', 1800) #60*30
-model.setParam('Presolve', 2)         # Presolve nivel x
+#model.setParam('Presolve', 2)         # Presolve nivel x
 #model.setParam('MIPFocus', 1)         # Enfoque en soluciones factibles rápidas
 #model.setParam('Threads', 4)          # Ajusta según la disponibilidad de CPU
 #model.setParam('Heuristics', 0.1)     # Aumenta el uso de heurísticas
 #model.setParam('NodefileStart', 0.5)  # Comienza a escribir en disco al usar el 50% de RAM
-model.setParam('MIPGap', 0.01)         # Permite una brecha de x% en la solución óptima
+model.setParam('MIPGap', 0.12)         # Permite una brecha de x% en la solución óptima
 
 #CONJUNTOS---------------------------------
 F = range(1, len(A()) + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
@@ -126,7 +126,7 @@ model.addConstrs((quicksum(u[f, i, k, p, m] for i in I for k in range(1, len(d_k
 #R15
 model.addConstrs((mu[f, p, m] <= rho[p, m] for f in F for p in P for m in M), name = "R15")
 #R16
-model.addConstrs((quicksum(mu[f, p, m] for f in F) <= 1 for p in P for m in M), name = "R16")
+model.addConstrs((quicksum(mu[f, p, m] for m in M) <= max_maquinas[f] for f in F for p in P), name = "R16")
 
 #UPDATE
 model.update()
@@ -199,8 +199,8 @@ if model.status == GRB.OPTIMAL:
 
     #costo_total = costo_viviendas + costo_sueldo_trabajadores + costo_uso_maquinas
 
-    #for f in F:
-        #print(f'La construcción de la vivienda {f} toma {t[f].x} dias')
+    for f in F:
+        print(f'La construcción de la vivienda {f} del tipo {A0()[f-1]} toma {t[f].x} dias')
 
     for f in F:
         costo = [f, costo_dia_vivienda[f]]

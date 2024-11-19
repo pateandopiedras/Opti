@@ -1,8 +1,4 @@
 i_id,nombre
-1,Cimientos y Estructuras
-2,Paredes
-3,Techo
-4,Instalaciones Electricas
-5,Instalaciones Sanitarias y Agua
-6,Ventanas y Puertas
-7,Acabados
+1,cemento
+2,madera
+3,fierros
