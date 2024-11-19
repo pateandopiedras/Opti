@@ -1,4 +1,4 @@
-from gurobipy import *
+from gurobipy import * # prueba alli
 from process_data import *
 
 #MODELO------------------------------------
