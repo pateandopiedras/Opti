@@ -126,7 +126,7 @@ model.addConstrs((quicksum(u[f, i, k, p, m] for i in I for k in range(1, len(d_k
 #R15
 model.addConstrs((mu[f, p, m] <= rho[p, m] for f in F for p in P for m in M), name = "R15")
 #R16
-model.addConstrs((quicksum(mu[f, p, m] for f in F) <= 1 for p in P for m in M), name = "R16")
+model.addConstrs((quicksum(mu[f, p, m] for m in M) <= max_maquinas[f] for f in F for p in P), name = "R16")
 
 #UPDATE
 model.update()
@@ -199,8 +199,8 @@ if model.status == GRB.OPTIMAL:
 
     #costo_total = costo_viviendas + costo_sueldo_trabajadores + costo_uso_maquinas
 
-    #for f in F:
-        #print(f'La construcción de la vivienda {f} toma {t[f].x} dias')
+    for f in F:
+        print(f'La construcción de la vivienda {f} toma {t[f].x} dias')
 
     for f in F:
         costo = [f, costo_dia_vivienda[f]]
