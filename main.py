@@ -9,7 +9,7 @@ model.setParam('TimeLimit', 1800) #60*30
 #model.setParam('Threads', 4)          # Ajusta según la disponibilidad de CPU
 #model.setParam('Heuristics', 0.1)     # Aumenta el uso de heurísticas
 #model.setParam('NodefileStart', 0.5)  # Comienza a escribir en disco al usar el 50% de RAM
-model.setParam('MIPGap', 0.02)         # Permite una brecha de x% en la solución óptima
+model.setParam('MIPGap', 0.05)         # Permite una brecha de x% en la solución óptima
 
 #CONJUNTOS---------------------------------
 F = range(1, len(A()) + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
@@ -150,6 +150,7 @@ funcion_objetivo = quicksum(t[f] * costo_dia_vivienda[f] +
 model.setObjective(funcion_objetivo, GRB.MINIMIZE)
 model.optimize()
 
+
 #Obtencion de datos
 if model.status == GRB.OPTIMAL:
     valor_objetivo = model.ObjVal #costo minimizado
@@ -163,6 +164,25 @@ if model.status == GRB.OPTIMAL:
     costo_uso_maquinas = 0.0
     costo_sueldo_trabajadores = 0
     costo_total = 0.0
+
+    filtro_f = 1  # Valor específico de f
+
+    ## codigo que crea un csv de los valores que le da la solucion a las variables
+    with open("resultados_filtrados.csv", "w", newline="") as archivo:
+        escritor = csv.writer(archivo)
+        escritor.writerow(["Variable", "Valor"])  # Encabezados
+        for v in model.getVars():
+            # Filtrar por las condiciones específicas
+            if (
+                v.VarName.startswith(f"x_fik[{filtro_f},") or  # Variables x_fik con f=1
+                v.VarName.startswith(f"t_f[{filtro_f}]") or   # Variables t_f con f=1
+                v.VarName.startswith(f"y_fik[{filtro_f},") or            # Todas las variables y_fik
+                v.VarName.startswith(f"z_fikp[{filtro_f},") or           # Todas las variables z_fikp
+                v.VarName.startswith(f"v_fp[{filtro_f},") or           # Todas las variables z_fikp
+                v.VarName.startswith(f"u_fikpm[{filtro_f},") or          # Todas las variables u_fikpm
+                v.VarName.startswith(f"mu_fpm[{filtro_f},")              # Todas las variables mu_fpm
+            ):
+                escritor.writerow([v.VarName,v.X])
 
     for f in F:
         costo = 0.0
@@ -199,8 +219,11 @@ if model.status == GRB.OPTIMAL:
 
     #costo_total = costo_viviendas + costo_sueldo_trabajadores + costo_uso_maquinas
 
+    
+
     for f in F:
         print(f'La construcción de la vivienda {f} del tipo {A0()[f-1]} toma {t[f].x} dias')
+
 
 #DATOS VARIABLE t
     dias_construccion = []
