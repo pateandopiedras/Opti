@@ -199,8 +199,20 @@ def ponderador_eficiencia():
 
 def cantidad_maxima_maquinas():
     d = {}
-    with open('data_test/23 N_f - cantidad_maxima_maquinas.csv', 'r') as archivo:
-        data = list(csv.reader(archivo))[1:]
-    for l in data:
-        d[int(l[0])] = int(l[1])
+    with open('data_test/23 N_fp - cantidad_maxima_maquinas.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    for i in data[1:]:
+        for j in data[0][1:]:
+            d[int(i[0]),int(j)] = int(i[int(j)]) 
     return d
+
+
+############## PARA MOSTRAR EN TERMINAL #################
+
+def A0():
+    nombres = []
+    with open('data/1 F - viviendas.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))[1:]  # Omitir encabezado
+    for l in data:
+        nombres.append(l[1])  # Agregar únicamente los nombres a la lista
+    return nombres

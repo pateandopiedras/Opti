@@ -153,7 +153,7 @@ def cantidad_max_uso_material():
         for i in data[1:]:
             Ki = i[int(j)].split(";")
             for k in range(len(Ki)):
-                d[int(j),k+1,int(i[0])] = float(Ki[k]) * 0.1                       ##También se puede jugar con este, aunque no entiendo porque no tiene un límite
+                d[int(j),k+1,int(i[0])] = float(Ki[k]) * 1                       ##También se puede jugar con este, aunque no entiendo porque no tiene un límite
     return d                                                                     ##Prueben con valore bajo 1 y el código corre rapidísimo  
 
 def minimo_trabajadores():
