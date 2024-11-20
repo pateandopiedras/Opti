@@ -1,4 +1,8 @@
-i_id\k_id,1,2,3
-1,malo,normal,bueno
-2,clasica,premium
-3,barato,promedio,caro
+i_id\k_id,1,2,3,4,5,6,7
+1, Imperial, Easy, Construmart, Sodimac, Cemento Polpaico, Cintac
+2, Imperial, Easy, Construmart, Sodimac, Cemento Polpaico, Cintac,  Volcán
+3, Imperial, Easy, Construmart, Sodimac, Cemento Polpaico, Cintac,  Volcán
+4, Imperial, Easy, Construmart, Sodimac, Tauron,           Ilumina, Schneider Electric Chile
+5, Imperial, Easy, Construmart, Sodimac
+6, Imperial, Easy, Construmart, Sodimac
+7, Imperial, Easy, Construmart, Sodimac, Lanco

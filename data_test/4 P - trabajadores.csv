@@ -1,11 +1,31 @@
-p_id,nombre
-1,trabajdor 1
-2,trabajdor 2
-3,trabajdor 3
-4,trabajdor 4
-5,trabajdor 5
-6,trabajdor 6
-7,trabajdor 7
-8,trabajdor 8
-9,trabajdor 9
-10,trabajdor 10
+p_id,Nombre
+1,  Albañil 1
+2,  Albañil 2
+3,  Albañil 3
+4,  Albañil 4
+5,  Albañil 5
+6,  Albañil 6
+7,  Albañil 7
+8,  Albañil 8
+9,  Albañil 9
+10, Albañil 10
+11, Albañil 11
+12, Albañil 12
+13, Albañil 13
+14, Albañil 14
+15, Carpintero 1
+16, Carpintero 2
+17, Carpintero 3
+18, Carpintero 4
+19, Carpintero 5
+20, Carpintero 6
+21, Maquinista 1
+22, Maquinista 2
+23, Maquinista 3
+24, Maquinista 4
+25, Electricicista 1
+26, Electricicista 2
+27, Electricicista 3
+28, Gasfiter 1
+29, Gasfiter 2
+30, Gasfiter 3
