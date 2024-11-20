@@ -142,7 +142,7 @@ def cantidad_uso_material():
         for i in data[1:]:
             Ki = i[int(j)].split(";")
             for k in range(len(Ki)):
-                d[int(j),k+1,int(i[0])] = float(Ki[k])  * 8                          ##Jueguen cambiando este multiplicador y el código sale más rápido
+                d[int(j),k+1,int(i[0])] = (float(Ki[k])  * 10)   + round(random.random(),2)                       ##Jueguen cambiando este multiplicador y el código sale más rápido
     return d
 
 def cantidad_max_uso_material():
@@ -153,7 +153,7 @@ def cantidad_max_uso_material():
         for i in data[1:]:
             Ki = i[int(j)].split(";")
             for k in range(len(Ki)):
-                d[int(j),k+1,int(i[0])] = float(Ki[k])
+                d[int(j),k+1,int(i[0])] = float(Ki[k])  + round(random.random()*10,2)  
     return d
 
 def minimo_trabajadores():
@@ -195,16 +195,18 @@ def ponderador_eficiencia():
         data = list(csv.reader(archivo))
     for i in data[1:]:
         for j in data[0][1:]:
-            d[int(i[0]),int(j)] = float(i[int(j)])
+            d[int(i[0]),int(j)] = float(i[int(j)]) + random.random()
     return d
 
 def cantidad_maxima_maquinas():
     d = {}
-    with open('data/23 N_f - cantidad_maxima_maquinas.csv', 'r') as archivo:
-        data = list(csv.reader(archivo))[1:]
-    for l in data:
-        d[int(l[0])] = int(l[1])
+    with open('data/23 N_fp - cantidad_maxima_maquinas.csv', 'r') as archivo:
+        data = list(csv.reader(archivo))
+    for i in data[1:]:
+        for j in data[0][1:]:
+            d[int(i[0]),int(j)] = int(i[int(j)]) 
     return d
+
 
 
 

@@ -9,7 +9,7 @@ model.setParam('TimeLimit', 1800) #60*30
 #model.setParam('Threads', 4)          # Ajusta según la disponibilidad de CPU
 #model.setParam('Heuristics', 0.1)     # Aumenta el uso de heurísticas
 #model.setParam('NodefileStart', 0.5)  # Comienza a escribir en disco al usar el 50% de RAM
-model.setParam('MIPGap', 0.12)         # Permite una brecha de x% en la solución óptima
+model.setParam('MIPGap', 0.1)         # Permite una brecha de x% en la solución óptima
 
 #CONJUNTOS---------------------------------
 F = range(1, len(A()) + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
@@ -72,7 +72,7 @@ rho = {(p, m): f14[p, m] for p in P for m in M}
 #gammapm: Ponderador de eficiencia de construcción del trabajador p con la máquina m
 gamma = {(p, m): f15[p, m] for p in P for m in M}
 #Nf: Cantidad máxima de máquinas que se pueden usar en la vivienda f
-max_maquinas = {f: f16[f] for f in F}
+max_maquinas = {(f, p): f16[f, p] for f in F for p in P}
 #jm: Costo diario asociado a usar la máquina m
 costo_uso_maq = {m: f17[m] for m in M}
 
@@ -107,12 +107,12 @@ model.addConstrs((x[f, i, k] <= cant_variante_material[i, k] * y[f, i, k] for f 
 #R6
 model.addConstrs((quicksum(z[f, i, k, p] * cant_uso_mat[i, k, p] for f in F) <= cant_max_uso_mat[i, k, p] for i in I for k in range(1, len(d_ki[i]) + 1) for p in P), name = "R6")
 #R7
-model.addConstrs((quicksum(z[f, i, k, p] for i in I for k in range(1,len(d_ki[i]) + 1)) <= max_plazo * v[f, p] for f in F for p in P), name = "R7")
+model.addConstrs((quicksum(z[f, i, k, p] + u[f, i, k, p, m] for i in I for k in range(1,len(d_ki[i]) + 1) for m in M) <= max_plazo * v[f, p] for f in F for p in P), name = "R7")
 #R8
 model.addConstrs((quicksum(v[f, p] for p in P) >= min_trabajadores[f] for f in F), name = "R8_1")
 model.addConstrs((quicksum(v[f, p] for p in P) <= max_trabajadores[f] for f in F), name = "R8_2")
 #R9
-model.addConstrs((quicksum(z[f, i, k, p] * cant_uso_mat[i, k, p] + u[f, i, k, p, m] * cant_uso_mat[i, k, p] * rho[p, m] for p in P) >= x[f, i, k] for f in F for i in I for k in range(1, len(d_ki[i]) + 1) for m in M), name = "R9")
+model.addConstrs((quicksum(z[f, i, k, p] * cant_uso_mat[i, k, p] + quicksum(u[f, i, k, p, m] * cant_uso_mat[i, k, p] * rho[p, m] for m in M) for p in P) >= x[f, i, k] for f in F for i in I for k in range(1, len(d_ki[i]) + 1) for m in M), name = "R9")
 #R10
 model.addConstrs((quicksum(z[f, i, k, p] + u[f, i, k, p, m] for i in I for k in range(1, len(d_ki[i]) + 1) for m in M) <= t[f] for f in F for p in P), name = "R10")
 #R11
@@ -126,7 +126,7 @@ model.addConstrs((quicksum(u[f, i, k, p, m] for i in I for k in range(1, len(d_k
 #R15
 model.addConstrs((mu[f, p, m] <= rho[p, m] for f in F for p in P for m in M), name = "R15")
 #R16
-model.addConstrs((quicksum(mu[f, p, m] for m in M) <= max_maquinas[f] for f in F for p in P), name = "R16")
+model.addConstrs((quicksum(mu[f, p, m] for m in M) <= max_maquinas[f, p] for f in F for p in P), name = "R16")
 
 #UPDATE
 model.update()
@@ -201,6 +201,22 @@ if model.status == GRB.OPTIMAL:
 
     for f in F:
         print(f'La construcción de la vivienda {f} del tipo {A0()[f-1]} toma {t[f].x} dias')
+
+#DATOS VARIABLE t
+    dias_construccion = []
+    cantidad_material_variante = []
+    for f in F:
+        dias = [f, t[f].x]
+        dias_construccion.append(dias)
+
+    print(dias_construccion)
+    #DATOS VARIABLE x
+    for f in F:
+        for i in I:
+            for k in range(1, Ki(i)):
+                if int(y[f, i, k].x) != 0:
+                    cantidad = [f, i, k, x[f, i, k].x]
+                    cantidad_material_variante.append(cantidad)
 
     for f in F:
         costo = [f, costo_dia_vivienda[f]]
