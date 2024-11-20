@@ -141,7 +141,7 @@ def cantidad_uso_material():
         for i in data[1:]:
             Ki = i[int(j)].split(";")
             for k in range(len(Ki)):
-                d[int(j),k+1,int(i[0])] = float(Ki[k]) * 3                  ##Jueguen cambiando este multiplicador y el código sale más rápido
+                d[int(j),k+1,int(i[0])] = float(Ki[k]) * 5                  ##Jueguen cambiando este multiplicador y el código sale más rápido
     return d                                                                  ## Con 1 y 2 no es factible porque las casas se construirían muy lento
                                                                               ## De 3 en adelante, mientras más alto, más rápido corre el código y baja el GAP
 
@@ -153,8 +153,8 @@ def cantidad_max_uso_material():
         for i in data[1:]:
             Ki = i[int(j)].split(";")
             for k in range(len(Ki)):
-                d[int(j),k+1,int(i[0])] = float(Ki[k]) * 1                        ##También se puede jugar con este, aunque no entiendo porque tienen efectos contrarios
-    return d
+                d[int(j),k+1,int(i[0])] = float(Ki[k]) * 0.1                       ##También se puede jugar con este, aunque no entiendo porque no tiene un límite
+    return d                                                                     ##Prueben con valore bajo 1 y el código corre rapidísimo  
 
 def minimo_trabajadores():
     d = {}
