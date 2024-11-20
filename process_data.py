@@ -1,5 +1,4 @@
 import csv #Cambio prueba Alli
-import random
 
 #CONJUNTOS
 def A():
@@ -142,8 +141,9 @@ def cantidad_uso_material():
         for i in data[1:]:
             Ki = i[int(j)].split(";")
             for k in range(len(Ki)):
-                d[int(j),k+1,int(i[0])] = (float(Ki[k])  * 10)   + round(random.random(),2)                       ##Jueguen cambiando este multiplicador y el código sale más rápido
-    return d
+                d[int(j),k+1,int(i[0])] = float(Ki[k]) * 3                  ##Jueguen cambiando este multiplicador y el código sale más rápido
+    return d                                                                  ## Con 1 y 2 no es factible porque las casas se construirían muy lento
+                                                                              ## De 3 en adelante, mientras más alto, más rápido corre el código y baja el GAP
 
 def cantidad_max_uso_material():
     d = {}
@@ -153,7 +153,7 @@ def cantidad_max_uso_material():
         for i in data[1:]:
             Ki = i[int(j)].split(";")
             for k in range(len(Ki)):
-                d[int(j),k+1,int(i[0])] = float(Ki[k])  + round(random.random()*10,2)  
+                d[int(j),k+1,int(i[0])] = float(Ki[k]) * 1                        ##También se puede jugar con este, aunque no entiendo porque tienen efectos contrarios
     return d
 
 def minimo_trabajadores():
@@ -195,7 +195,7 @@ def ponderador_eficiencia():
         data = list(csv.reader(archivo))
     for i in data[1:]:
         for j in data[0][1:]:
-            d[int(i[0]),int(j)] = float(i[int(j)]) + random.random()
+            d[int(i[0]),int(j)] = float(i[int(j)])
     return d
 
 def cantidad_maxima_maquinas():
