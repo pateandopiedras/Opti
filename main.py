@@ -1,5 +1,5 @@
 from gurobipy import * # prueba alli
-from process_little_data import *
+from process_data_test import *
 
 #MODELO------------------------------------
 model = Model()
@@ -9,7 +9,7 @@ model.setParam('TimeLimit', 1800) #60*30
 #model.setParam('Threads', 4)          # Ajusta según la disponibilidad de CPU
 #model.setParam('Heuristics', 0.1)     # Aumenta el uso de heurísticas
 #model.setParam('NodefileStart', 0.5)  # Comienza a escribir en disco al usar el 50% de RAM
-model.setParam('MIPGap', 0.05)         # Permite una brecha de x% en la solución óptima
+model.setParam('MIPGap', 0.1)         # Permite una brecha de x% en la solución óptima
 
 #CONJUNTOS---------------------------------
 F = range(1, len(A()) + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción

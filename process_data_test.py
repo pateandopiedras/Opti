@@ -68,7 +68,7 @@ def cantidad_material():
         data = list(csv.reader(archivo))
     for i in data[1:]:
         for j in data[0][1:]:
-            d[int(j), int(i[0])] = int(i[int(j)])
+            d[int(j), int(i[0])] = float(i[int(j)])
     return d
 
 def costo_unidad_material():
@@ -141,7 +141,7 @@ def cantidad_uso_material():
         for i in data[1:]:
             Ki = i[int(j)].split(";")
             for k in range(len(Ki)):
-                d[int(j),k+1,int(i[0])] = int(Ki[k])
+                d[int(j),k+1,int(i[0])] = float(Ki[k])
     return d
 
 def cantidad_max_uso_material():
@@ -152,7 +152,7 @@ def cantidad_max_uso_material():
         for i in data[1:]:
             Ki = i[int(j)].split(";")
             for k in range(len(Ki)):
-                d[int(j),k+1,int(i[0])] = int(Ki[k])
+                d[int(j),k+1,int(i[0])] = float(Ki[k])
     return d
 
 def minimo_trabajadores():
