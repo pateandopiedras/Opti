@@ -141,7 +141,7 @@ def cantidad_uso_material():
         for i in data[1:]:
             Ki = i[int(j)].split(";")
             for k in range(len(Ki)):
-                d[int(j),k+1,int(i[0])] = float(Ki[k])
+                d[int(j),k+1,int(i[0])] = round(float(Ki[k])   * 4, 3)
     return d
 
 def cantidad_max_uso_material():
@@ -152,7 +152,7 @@ def cantidad_max_uso_material():
         for i in data[1:]:
             Ki = i[int(j)].split(";")
             for k in range(len(Ki)):
-                d[int(j),k+1,int(i[0])] = float(Ki[k])
+                d[int(j),k+1,int(i[0])] = round(float(Ki[k])   * 1, 3)
     return d
 
 def minimo_trabajadores():

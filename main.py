@@ -1,5 +1,5 @@
 from gurobipy import * # prueba alli
-from process_data_test import *
+from process_data import *
 
 #MODELO------------------------------------
 model = Model()
@@ -9,7 +9,7 @@ model.setParam('TimeLimit', 1800) #60*30
 #model.setParam('Threads', 4)          # Ajusta según la disponibilidad de CPU
 #model.setParam('Heuristics', 0.1)     # Aumenta el uso de heurísticas
 #model.setParam('NodefileStart', 0.5)  # Comienza a escribir en disco al usar el 50% de RAM
-model.setParam('MIPGap', 0.1)         # Permite una brecha de x% en la solución óptima
+model.setParam('MIPGap', 0.13)         # Permite una brecha de x% en la solución óptima
 
 #CONJUNTOS---------------------------------
 F = range(1, len(A()) + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
@@ -185,14 +185,19 @@ if model.status == GRB.OPTIMAL:
                 escritor.writerow([v.VarName,v.X])
 
     for f in F:
-        costo = 0.0
-        for i in I:
-            c = 1
-            for k in d_ki[i]:
-                costo += y[f, i, c].x * x[f, i, c].x * f3[i, c]
-                c += 1
-        print(f'El costo de la vivienda {f} es de {costo} $CLP')
-        costo_viviendas += float(costo)
+        costo_vivienda_f = t[f].X * costo_dia_vivienda[f] + \
+                            quicksum(
+                                x[f, i, k].X * costo_mat[i, k] + 
+                                y[f, i, k].X * costo_uso_mat[i, k] + 
+                                quicksum(
+                                    z[f, i, k, p].X * sueldo[p] + 
+                                    quicksum(u[f, i, k, p, m].X * (costo_uso_maq[m] + sueldo[p]) for m in M) 
+                                    for p in P) 
+                                for i in I for k in range(1, Ki(i))
+                            ).getValue()  # Ahora esto es una evaluación numérica
+
+        print(f"Costo total para la vivienda {f}: {costo_vivienda_f}")
+
 
     #for p in P:
         #costo = 0.0
