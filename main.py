@@ -1,16 +1,11 @@
-from gurobipy import * # prueba alli
+from gurobipy import *
 from process_data import *
 import subprocess
 
 #MODELO------------------------------------
 model = Model()
 model.setParam('TimeLimit', 1800) #60*30
-#model.setParam('Presolve', 2)         # Presolve nivel x
-#model.setParam('MIPFocus', 1)         # Enfoque en soluciones factibles rápidas
-#model.setParam('Threads', 4)          # Ajusta según la disponibilidad de CPU
-#model.setParam('Heuristics', 0.1)     # Aumenta el uso de heurísticas
-#model.setParam('NodefileStart', 0.5)  # Comienza a escribir en disco al usar el 50% de RAM
-model.setParam('MIPGap', 0.13)         # Permite una brecha de x% en la solución óptima
+model.setParam('MIPGap', 0.3)    # Permite una brecha de x% en la solución óptima
 
 #CONJUNTOS---------------------------------
 F = range(1, len(A()) + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
@@ -141,102 +136,56 @@ funcion_objetivo = quicksum(t[f] * costo_dia_vivienda[f] +
                                                       quicksum(u[f, i, k, p, m] * (costo_uso_maq[m] + sueldo[p]) for m in M) for p in P) for i in I for k in range(1, Ki(i)))
                                                       for f in F)
 
-#funcion_objetivo = (quicksum((t[f] * costo_dia_vivienda[f] + 
-                              #quicksum((quicksum((x[f, i, k] * costo_mat[i, k] + y[f, i, k] * costo_uso_mat[i, k] + 
-                                                  #quicksum((z[f, i, k, p] * sueldo[p] + 
-                                                            #quicksum(u[f, i, k, p, m] * costo_uso_maq[m] for m in M)) for p in P)) for k in range(1, Ki(i)))) 
-                                                            #for i in I)) 
-                                                            #for f in F))
-#Optimizacion
+#OPTIMIZACIÓN
 model.setObjective(funcion_objetivo, GRB.MINIMIZE)
 model.optimize()
 
 
-#Obtencion de datos
+#OBTENCIÓN DE DATOS
 if model.status == GRB.OPTIMAL:
     valor_objetivo = model.ObjVal #costo minimizado
     print(f"El valor objetivo es: {valor_objetivo}")
-    cost_viv = []
-    cost_unit_mat = []
-    cost_fij_mat = []
-    cost_sueld = []
-    cost_maq = []
     costo_viviendas = 0.0
     costo_uso_maquinas = 0.0
     costo_sueldo_trabajadores = 0
     costo_total = 0.0
 
-    filtro_f = 1  # Valor específico de f
-
-    ## codigo que crea un csv de los valores que le da la solucion a las variables
-    with open("resultados_filtrados.csv", "w", newline="") as archivo:
-        escritor = csv.writer(archivo)
-        escritor.writerow(["Variable", "Valor"])  # Encabezados
-        for v in model.getVars():
-            # Filtrar por las condiciones específicas
-            if (
-                v.VarName.startswith(f"x_fik[{filtro_f},") or  # Variables x_fik con f=1
-                v.VarName.startswith(f"t_f[{filtro_f}]") or   # Variables t_f con f=1
-                v.VarName.startswith(f"y_fik[{filtro_f},") or            # Todas las variables y_fik
-                v.VarName.startswith(f"z_fikp[{filtro_f},") or           # Todas las variables z_fikp
-                v.VarName.startswith(f"v_fp[{filtro_f},") or           # Todas las variables z_fikp
-                v.VarName.startswith(f"u_fikpm[{filtro_f},") or          # Todas las variables u_fikpm
-                v.VarName.startswith(f"mu_fpm[{filtro_f},")              # Todas las variables mu_fpm
-            ):
-                escritor.writerow([v.VarName,v.X])
-
-    for f in F:
-        costo_vivienda_f = t[f].X * costo_dia_vivienda[f] + \
-                            quicksum(
-                                x[f, i, k].X * costo_mat[i, k] + 
-                                y[f, i, k].X * costo_uso_mat[i, k] + 
-                                quicksum(
-                                    z[f, i, k, p].X * sueldo[p] + 
-                                    quicksum(u[f, i, k, p, m].X * (costo_uso_maq[m] + sueldo[p]) for m in M) 
-                                    for p in P) 
-                                for i in I for k in range(1, Ki(i))
-                            ).getValue()  # Ahora esto es una evaluación numérica
-
-        print(f"Costo total para la vivienda {f}: {costo_vivienda_f}")
-
-
-    #for p in P:
-        #costo = 0.0
-        #for f in F:
-            #for i in I:
-                #c = 1
-                #for k in d_ki[i]:
-                    #costo += z[f, i, k, p].x * sueldo[p]
-                    #c += 1
-        #costo_sueldo_trabajadores += float(costo)
-    #print(costo_sueldo_trabajadores)
-
-    #for m in M:
-        #costo = 0.0
-        #for p in P:
-            #for f in F:
-                #for i in I:
-                    #c = 1
-                    #for k in d_ki[i]:
-                        #costo += u[f, i, k, p, m].x * (costo_uso_maq[m] + sueldo[p])
-                        #c += 1
-        #costo_uso_maquinas += float(costo)
-    #print(costo_uso_maquinas)
-
-    #costo_total = costo_viviendas + costo_sueldo_trabajadores + costo_uso_maquinas
-
-    
-
-    for f in F:
-        print(f'La construcción de la vivienda {f} del tipo {A0()[f-1]} toma {t[f].x} dias')
-
-
-#DATOS VARIABLE t
+    #DATOS VARIABLES
     dias_construccion = []
+    cantidad_material_usado = []
+    dias_trabajo_manual = []
+    dias_trabajo_maquina = []
+
+    for f in F:
+        dias = [f, t[f].x]
+        dias_construccion.append(dias)
+
+    for f in F:
+        for i in I:
+            for k in range(1, Ki(i)):
+                if y[f, i, k].x != 0.0:
+                    cantidad = x[f, i, k].x
+                    cantidad_material_usado.append([f, i, k, cantidad])
+
+    for f in F:
+        for i in I:
+            for k in range(1, Ki(i)):
+                for p in P:
+                    dias = z[f, i, k, p].x
+                    dias_trabajo_manual.append([f, i, k, p, dias])
+
+    for f in F:
+        for i in I:
+            for k in range(1, Ki(i)):
+                for p in P:
+                    for m in M:
+                        dias = u[f, i, k, p, m].x
+                        dias_trabajo_maquina.append([f, i, k, p, m, dias])
+
+
     cantidad_material_variante = []
     cantidad_material_variante_2 = []
     calidad_materiales = []
-    cantidad_material_usado = []
     cantidad_variante_usada = []
     total_trabajadores_vivienda = []
     tiempo_total_trabajador_vivienda = []
@@ -246,11 +195,6 @@ if model.status == GRB.OPTIMAL:
     total_maquinas_usadas = []
     dias_cantidad = []
     cantidad_maxima = []
-
-    #R1 -> Gráfico
-    for f in F:
-        dias = [f, t[f].x]
-        dias_construccion.append(dias)
 
     #R2
     for f in F:
@@ -344,9 +288,6 @@ if model.status == GRB.OPTIMAL:
                                 t += u[f, i, k, p, m].x
         tiempo_total_maquina.append([m, t])
 
-    #R15
-
-
     #R16
     for f in F:
         t = 0
@@ -356,15 +297,6 @@ if model.status == GRB.OPTIMAL:
                     t += 1
         total_maquinas_usadas.append([f, t])
 
-    #for f in F:
-        #for i in I:
-            #for k in range(1, Ki(i)):
-               # if int(y[f, i, k].x) != 0:
-                   # cantidad = [f, i, k, x[f, i, k].x, calidad_promedio[i, f]]
-                   # calidad_materiales.append(cantidad)
-    
-    #print(calidad_materiales)
-
 
 elif model.status == GRB.INFEASIBLE:
     print("El modelo es infactible.")
@@ -372,7 +304,4 @@ elif model.status == GRB.INFEASIBLE:
     model.write("infactibilidad.ilp")  # Guarda el IIS en un archivo
 else:
     print("El modelo no encontró una solución óptima por alguna otra razón.")
-
-#if __name__ == "__main__":
-    #subprocess.run(["python3", "graficos.py"])
 

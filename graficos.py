@@ -3,82 +3,74 @@ import matplotlib
 import gurobipy
 import matplotlib.pyplot as plt
 from tabulate import tabulate
-from main import cost_viv, cost_unit_mat, cost_fij_mat, cost_sueld, cost_maq, valor_objetivo
-from main import dias_construccion, cantidad_material_variante, cantidad_material_variante_2, total_trabajadores_vivienda, tiempo_total_trabajador_vivienda, tiempo_total_trabajador, tiempo_total_maquina_vivienda, tiempo_total_maquina, total_maquinas_usadas, dias_cantidad, cantidad_maxima
+from main import cantidad_material_variante, cantidad_material_variante_2, total_trabajadores_vivienda, tiempo_total_trabajador_vivienda, tiempo_total_trabajador, tiempo_total_maquina_vivienda, tiempo_total_maquina, total_maquinas_usadas, dias_cantidad, cantidad_maxima
+from main import valor_objetivo, dias_construccion, cantidad_material_usado, dias_trabajo_manual, dias_trabajo_maquina
 import os
+from matplotlib.ticker import MultipleLocator
 import numpy as np
 
 #matplotlib.use('TkAgg')
+
+#RESULTADOS VARIABLES
 
 data_dias_construccion = pd.DataFrame(dias_construccion, columns = ['Vivienda', 'Días'])
 plt.bar(data_dias_construccion['Vivienda'], data_dias_construccion['Días'])
 plt.title(f"Tiempo Vivienda - Días")
 plt.xlabel('Vivienda')
 plt.ylabel('Días')
-plt.savefig(os.path.join('graficos', 'vivienda_dias.png'))
+plt.savefig(os.path.join('resultados_variables', 'vivienda_dias.png'))
 plt.close()
 plt.figure()
 
-#data_cmv = pd.DataFrame(cantidad_material_variante, columns = ['Vivienda', 'Material', 'Variante', 'Cantidad'])
-#plt.bar(data_cmv['Vivienda'], data_cmv['Material'], data_cmv['Variante'])
-#plt.title('Cantidad Vivienda - Material - Variante')
-#plt.xlabel('Vivienda')
-#plt.ylabel('Cantidad')
-#data_cmv['Material_Variante'] = data_cmv['Material'].astype(str) + " - Variante " + data_cmv['Variante'].astype(str)
-#g_data = data_cmv.pivot_table(index='Vivienda', columns='Material_Variante', values='Cantidad', aggfunc='sum', fill_value=0)
-#g_data.plot(kind='bar', stacked=True, figsize=(10, 7))
-#fig, ax = plt.subplots(figsize=(10, 7))
-#barras = g_data.plot(kind='bar', stacked=True, ax=ax)
-#for i, bar_group in enumerate(barras.containers): 
-    #for bar in bar_group:
-        #height = bar.get_height()
-        #if height > 0:
-            #x_pos = bar.get_x() + bar.get_width() / 2
-            #y_pos = bar.get_y() + height / 2
-            #ax.text(
-                #x_pos, y_pos, f'{height:.2f}',
-                #ha='center', va='center', fontsize=8, color='black')
-#plt.savefig(os.path.join('graficos', 'cantidad_material_variante.png'))
-#plt.close()
-#plt.figure()
+data_cmv = pd.DataFrame(cantidad_material_usado, columns = ['Vivienda', 'Material', 'Variante', 'Cantidad'])
+data_cmv['Material_Variante'] = data_cmv['Variante'].astype(str)
+output_folder = os.path.join('resultados_variables', 'graficos_por_vivienda')
+for vivienda in data_cmv['Vivienda'].unique():
+    data_vivienda = data_cmv[data_cmv['Vivienda'] == vivienda]  
+    pivot_data = data_vivienda.pivot_table(index='Material', columns='Variante', values='Cantidad', aggfunc='sum', fill_value=0)
+    ax = pivot_data.plot(
+        kind='bar', stacked=True, width=0.8, figsize=(10, 12),
+        colormap='tab20', edgecolor='black'
+    )
+    plt.title(f'Vivienda {vivienda}: Materiales y Variantes', fontsize=14)
+    plt.xlabel('Material', fontsize=12)
+    plt.ylabel('Cantidad', fontsize=12)
+    plt.xticks(rotation=45, ha='right', fontsize=10)
+    plt.legend(title="Variantes", bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=10)
+    ax.yaxis.set_ticks(range(0, int(pivot_data.values.max()) + 51, 50))
+    for bar_group in ax.containers:
+        for bar in bar_group:
+            height = bar.get_height()
+            if height > 0:
+                ax.text(
+                    bar.get_x() + bar.get_width() / 2, 
+                    bar.get_y() + height / 2,
+                    f'{height:.1f}',
+                    ha='center', va='center', fontsize=8, color='black'
+                )
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_folder, f'vivienda_{vivienda}_materiales_variantes.png'))
+    plt.close()
 
+tabla_z = tabulate(dias_trabajo_manual, headers=['Vivienda', 'Material', 'Variante', 'Trabajador', 'Días'])
+tabla_z += "\n"
+carpeta  = os.path.join('resultados_variables', "resultados_variable_z.txt")
+with open(carpeta, "w") as archivo:
+    archivo.write("Tabla Variable z")
+    archivo.write("\n")
+    archivo.write(tabla_z)
+    archivo.write("\n")
 
-# Crear el gráfico de barras horizontales
+tabla_u = tabulate(dias_trabajo_maquina, headers=['Vivienda', 'Material', 'Variante', 'Trabajador', 'Maquina', 'Días'])
+tabla_u += "\n"
+carpeta  = os.path.join('resultados_variables', "resultados_variable_u.txt")
+with open(carpeta, "w") as archivo:
+    archivo.write("Tabla Variable u")
+    archivo.write("\n")
+    archivo.write(tabla_u)
+    archivo.write("\n")
 
-#data = pd.DataFrame(calidad_materiales, columns = ['Vivienda', 'Material', 'Variante', 'Cantidad', 'Calidad Promedio'])
-## Definir calidad mínima (valor arbitrario)
-#calidad_minima = 10
-# Crear el gráfico
-#fig, ax = plt.subplots(figsize=(10, 6))
-# Usar los materiales para las posiciones en el eje Y
-#y_pos = np.arange(len(data['Material']))
-# Dibujar las barras horizontales, usando 'Calidad Promedio' para la altura de las barras
-#ax.barh(y_pos, data['Calidad Promedio'], color='skyblue', edgecolor='black', label='Calidad Promedio')
-# Dibujar una línea vertical para la calidad mínima
-#ax.axvline(calidad_minima, color='red', linestyle='--', label='Calidad Mínima')
-# Etiquetas y detalles
-#ax.set_yticks(y_pos)
-#ax.set_yticklabels(data['Material'])  # Asignar etiquetas de los materiales
-#ax.set_xlabel('Calidad Promedio')
-#ax.set_title('Cumplimiento de Calidad Mínima por Tipo de Material')
-#ax.legend(loc='lower right')
-# Ajustar el gráfico para que todo encaje bien
-#plt.tight_layout()
-# Mostrar el gráfico
-#plt.show()
-#data_dtmm = pd.DataFrame(dias_trabajo_manual_maquina, columns = ['Trabajador', 'Material', 'Variante', 'Cantidad'])
-
-#data_cost_viv = pd.DataFrame(cost_viv, columns = ['Vivienda', 'Costo'])
-#plt.bar(data_cost_viv['Vivienda'], data_cost_viv['Costo'])
-#plt.title('Costo de la construcción de una vivienda')
-#plt.xlabel('Vivienda')
-#plt.ylabel('Costo')
-#plt.savefig(os.path.join('graficos', 'grafica1.png'))
-#plt.title(f"grafica1")
-#plt.close()
-#plt.figure()
-
-#plt.show()
+#TABLAS RESTRICCIONES
 
 tabla_2 = tabulate(cantidad_material_variante, headers=['Vivienda', 'Material-Variante', 'Cantidad Utilizada'])
 tabla_2 += "\n"
