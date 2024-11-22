@@ -1,5 +1,6 @@
 from gurobipy import * # prueba alli
 from process_data import *
+import subprocess
 
 #MODELO------------------------------------
 model = Model()
@@ -9,7 +10,7 @@ model.setParam('TimeLimit', 1800) #60*30
 #model.setParam('Threads', 4)          # Ajusta según la disponibilidad de CPU
 #model.setParam('Heuristics', 0.1)     # Aumenta el uso de heurísticas
 #model.setParam('NodefileStart', 0.5)  # Comienza a escribir en disco al usar el 50% de RAM
-model.setParam('MIPGap', 0.02)         # Permite una brecha de x% en la solución óptima
+model.setParam('MIPGap', 0.05)         # Permite una brecha de x% en la solución óptima
 
 #CONJUNTOS---------------------------------
 F = range(1, len(A()) + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
@@ -205,40 +206,137 @@ if model.status == GRB.OPTIMAL:
 #DATOS VARIABLE t
     dias_construccion = []
     cantidad_material_variante = []
+    cantidad_material_variante_2 = []
+    calidad_materiales = []
+    cantidad_material_usado = []
+    cantidad_variante_usada = []
+    total_trabajadores_vivienda = []
+    tiempo_total_trabajador_vivienda = []
+    tiempo_total_trabajador = []
+    tiempo_total_maquina_vivienda = []
+    tiempo_total_maquina = []
+    total_maquinas_usadas = []
+    dias_cantidad = []
+    cantidad_maxima = []
+
+    #R1 -> Gráfico
     for f in F:
         dias = [f, t[f].x]
         dias_construccion.append(dias)
 
-    print(dias_construccion)
-    #DATOS VARIABLE x
+    #R2
+    for f in F:
+        for i in I:
+            cantidad = 0.0
+            for k in range(1, Ki(i)):
+                if int(y[f, i, k].x) != 0:
+                    cantidad += x[f, i, k].x * f8[i, k]
+            cantidad_material_variante.append([f, i, cantidad])
+    
+    #R3
     for f in F:
         for i in I:
             for k in range(1, Ki(i)):
                 if int(y[f, i, k].x) != 0:
                     cantidad = [f, i, k, x[f, i, k].x]
-                    cantidad_material_variante.append(cantidad)
+                    cantidad_material_variante_2.append(cantidad)
 
+    #R6
+    for i in I:
+        for k in range(1, Ki(i)):
+            for p in P:
+                cantidad = 0.0
+                for f in F:
+                    cantidad += (z[f, i, k, p].x * cant_uso_mat[i, k, p])
+                if v[f, p].x != 0.0 and int(y[f, i, k].x) != 0:
+                    cantidad_maxima.append([i, k, p, cantidad, cant_max_uso_mat[i, k, p]])
+
+    #R8
     for f in F:
-        costo = [f, costo_dia_vivienda[f]]
-        cost_viv.append(costo)
+        t = 0
+        for p in P:
+            if v[f, p].x != 0.0:
+                t += 1
+        total_trabajadores_vivienda.append([f, t])
 
-    for i in I:
-        for k in range(1, Ki(i)):
-            costo = [i, k, costo_mat[i, k]]
-            cost_unit_mat.append(costo)
+    #R9
+    for f in F:
+        for i in I:
+            for k in range(1, Ki(i)):
+                if int(y[f, i, k].x) != 0:
+                    pm = 0.0
+                    sm = 0.0
+                    for p in P:
+                        pm += z[f, i, k, p].x * cant_uso_mat[i, k, p]
+                        for m in M:
+                            sm += (u[f, i, k, p, m].x * cant_uso_mat[i, k, p] * gamma[p, m])
+                    r = pm + sm
+                    dias_cantidad.append([f, i, k, r, x[f, i, k].x])
+                    
+    #R10
+    for f in F:
+        for p in P:
+            if v[f, p].x:
+                t = 0.0
+                for i in I:
+                    for k in range(1, Ki(i)):
+                        for m in M:
+                            t += (z[f, i, k, p].x + u[f, i, k, p, m].x)
+                tiempo_total_trabajador_vivienda.append([f, p, t])
 
-    for i in I:
-        for k in range(1, Ki(i)):
-            costo = [i, k, costo_uso_mat[i, k]]
-            cost_fij_mat.append(costo)
-
+    #R11
     for p in P:
-        costo = [p, sueldo[p]]
-        cost_sueld.append(costo)
+        t = 0.0
+        for f in F:
+            for i in I:
+                for k in range(1, Ki(i)):
+                    for m in M:
+                        t += (z[f, i, k, p].x + u[f, i, k, p, m].x)
+        tiempo_total_trabajador.append([p, t])
 
+    #R12
+    for f in F:
+        for m in M:
+            t = 0.0
+            for p in P:
+                if mu[f, p, m].x != 0.0:
+                    for i in I:
+                        for k in range(1, Ki(i)):
+                                t += u[f, i, k, p, m].x
+            tiempo_total_maquina_vivienda.append([f, m, t])
+
+    #R13
     for m in M:
-        costo = [m, costo_uso_maq[m]]
-        cost_maq.append(costo)
+        t = 0.0
+        for f in F:
+            for p in P:
+                if mu[f, p, m].x != 0.0:
+                    for i in I:
+                        for k in range(1, Ki(i)):
+                                t += u[f, i, k, p, m].x
+        tiempo_total_maquina.append([m, t])
+
+    #R15
+
+
+    #R16
+    for f in F:
+        t = 0
+        for p in P:
+            for m in M:
+                if mu[f, p, m].x != 0.0:
+                    t += 1
+        total_maquinas_usadas.append([f, t])
+
+    #for f in F:
+        #for i in I:
+            #for k in range(1, Ki(i)):
+               # if int(y[f, i, k].x) != 0:
+                   # cantidad = [f, i, k, x[f, i, k].x, calidad_promedio[i, f]]
+                   # calidad_materiales.append(cantidad)
+    
+    #print(calidad_materiales)
+
 
 elif model.status == GRB.INFEASIBLE:
     print("El modelo es infactible.")
@@ -247,10 +345,6 @@ elif model.status == GRB.INFEASIBLE:
 else:
     print("El modelo no encontró una solución óptima por alguna otra razón.")
 
-#dias ideales para construir la casa
-#hf: Costo asociado a un dia
-#cik: costo de una unidad del material k del tipo i
-#dik: costo fijo asociado al uso del material
-#qp: sueldo que cobra trabajador
-#jm: costo diario asociado a maquina
+#if __name__ == "__main__":
+    #subprocess.run(["python3", "graficos.py"])
 
