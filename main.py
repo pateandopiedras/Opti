@@ -5,7 +5,7 @@ import subprocess
 #MODELO------------------------------------
 model = Model()
 model.setParam('TimeLimit', 1800) #60*30
-model.setParam('MIPGap', 0.3)    # Permite una brecha de x% en la solución óptima
+model.setParam('MIPGap', 0.13)    # Permite una brecha de x% en la solución óptima
 
 #CONJUNTOS---------------------------------
 F = range(1, len(A()) + 1) #Viviendas a construirse a lo largo del Plan de Reconstrucción
