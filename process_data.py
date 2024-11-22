@@ -207,11 +207,6 @@ def cantidad_maxima_maquinas():
             d[int(i[0]),int(j)] = int(i[int(j)]) 
     return d
 
-
-
-
-
-
 ############## PARA MOSTRAR EN TERMINAL #################
 
 def A0():
